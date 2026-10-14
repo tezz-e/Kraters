@@ -7,6 +7,7 @@ An automated data collection and analysis suite for first-year physics lab exper
 This project replaces traditional stopwatch timing with high-speed sensor automation:
 - **MPU6050 (6-axis IMU)**: Mounted flat on the pendulum rod, detects swing reversals via gyroscope zero-crossings and measures instantaneous tilt angles for amplitude correction.
 - **IR Break-Beam Sensor**: Detects center-line equilibrium crossings.
+- **Interactive Physics & Apparatus Guide**: Open `index.html` (or run `open_guide.bat`) in any browser for tabbed notes covering the complete apparatus deconstruction, governing formulae, derivations, and live physics simulations.
 - **Manual Stopwatch Input**: Allows side-by-side comparison between manual human timing and automated sensor timing in the final report.
 
 ---

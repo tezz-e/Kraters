@@ -1,0 +1,2487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kater's notes: reversible pendulum, condensed</title>
+  <meta name="description" content="Condensed, tabbed notes for the automated Kater's Reversible Pendulum experiment: apparatus, physics, derivations, sensor fusion, and laboratory data.">
+
+  <!-- Typography: Newsreader (editorial serif) + Figtree (clean sans) + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- KaTeX for crisp LaTeX formulas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS (Directly matches evs-vit.vercel.app)
+       ========================================================================== */
+    :root {
+      color-scheme: dark;
+      --bg: #18181a;
+      --side: #1e1e21;
+      --panel: #232326;
+      --raised: #2c2c30;
+      --line: #36363b;
+      --line-soft: #2a2a2e;
+      --dim: #85858d;
+      --text: #bfbfc5;
+      --hi: #f4f4f6;
+      --veil: rgba(12, 12, 13, 0.72);
+      --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+      --sans: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+      --mono: "JetBrains Mono", monospace;
+      --ease: cubic-bezier(.2, .7, .2, 1);
+      --side-w: 288px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      height: 100%;
+      background: var(--bg);
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15.5px;
+      line-height: 1.62;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    b, strong {
+      color: var(--hi);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       SIDEBAR (Exact EVS notes structure)
+       ========================================================================== */
+    .side {
+      position: fixed;
+      top: 0; bottom: 0; left: 0;
+      width: var(--side-w);
+      background: var(--side);
+      border-right: 1px solid var(--line-soft);
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+      transition: transform .35s var(--ease);
+    }
+
+    .brand {
+      padding: 22px 22px 14px;
+    }
+    .brand a {
+      text-decoration: none;
+      font-family: var(--serif);
+      font-size: 25px;
+      color: var(--hi);
+      letter-spacing: -.01em;
+      display: block;
+    }
+    .brand p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: var(--dim);
+    }
+
+    .search-btn {
+      margin: 4px 16px 10px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--dim);
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      font-family: var(--sans);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .search-btn:hover {
+      color: var(--text);
+      border-color: #45454b;
+    }
+    .search-btn kbd {
+      margin-left: auto;
+      font-family: var(--sans);
+      font-size: 11.5px;
+      padding: 1px 6px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--side);
+      color: var(--dim);
+    }
+
+    .nav {
+      overflow-y: auto;
+      padding: 4px 10px 28px;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line) transparent;
+    }
+    .nav-section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--dim);
+      margin: 18px 12px 6px;
+      letter-spacing: .01em;
+    }
+    .nav-section-title span.count {
+      font-weight: 500;
+      font-size: 11.5px;
+      color: #6a6a72;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-size: 14px;
+      color: var(--text);
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav a:hover {
+      background: var(--panel);
+      color: var(--hi);
+    }
+    .nav a.on {
+      background: var(--raised);
+      color: var(--hi);
+    }
+    .nav a .dot {
+      width: 7.5px;
+      height: 7.5px;
+      border-radius: 50%;
+      border: 1.5px solid #5a5a61;
+      flex: none;
+      transition: background .2s, border-color .2s;
+    }
+    .nav a.done .dot {
+      background: var(--hi);
+      border-color: var(--hi);
+    }
+    .nav a .code {
+      margin-left: auto;
+      font-size: 11.5px;
+      color: #6a6a72;
+      font-family: var(--mono);
+    }
+
+    .side-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--line-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--dim);
+    }
+    .side-foot button, .side-foot a {
+      background: none;
+      border: none;
+      color: var(--dim);
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .side-foot button:hover, .side-foot a:hover {
+      color: var(--hi);
+    }
+    .side-foot kbd {
+      font-family: var(--sans);
+      font-size: 11px;
+      padding: 1px 5px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      margin-left: 2px;
+    }
+
+    /* ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== */
+    .main {
+      margin-left: var(--side-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 100vh;
+    }
+
+    /* Top Sticky Bar */
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 36px;
+      background: rgba(24, 24, 26, .88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .crumb {
+      font-size: 14px;
+      color: var(--dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .crumb span.slash {
+      margin: 0 6px;
+      color: #4a4a52;
+    }
+    .crumb span.active {
+      color: var(--hi);
+    }
+
+    .top-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: none;
+    }
+    .prog {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--dim);
+    }
+    .prog-bar {
+      width: 88px;
+      height: 3px;
+      background: var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .prog-bar i {
+      display: block;
+      height: 100%;
+      background: var(--hi);
+      width: 0;
+      transition: width .4s var(--ease);
+    }
+
+    .tbtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 13.5px;
+      color: var(--dim);
+      cursor: pointer;
+    }
+    .tbtn:hover {
+      color: var(--hi);
+      border-color: #4a4a52;
+    }
+
+    /* Recall Switch */
+    .switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      font-size: 13.5px;
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 12px 4px 6px;
+      color: var(--dim);
+      user-select: none;
+    }
+    .switch:hover {
+      color: var(--hi);
+      border-color: #4a4a52;
+    }
+    .switch.on {
+      border-color: var(--hi);
+      color: var(--hi);
+    }
+    .switch .knob {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #505058;
+      transition: background .2s, transform .2s;
+    }
+    .switch.on .knob {
+      background: var(--hi);
+    }
+
+    /* ==========================================================================
+       VIEWPORT / TOPIC VIEW
+       ========================================================================== */
+    .view {
+      max-width: 980px;
+      padding: 40px 48px 100px;
+      width: 100%;
+      margin: 0;
+    }
+
+    /* Topic Header */
+    .topic-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--dim);
+      margin-bottom: 14px;
+    }
+    .topic-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      color: var(--dim);
+      background: var(--side);
+    }
+
+    .topic-title {
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 500;
+      line-height: 1.18;
+      color: var(--hi);
+      letter-spacing: -.02em;
+      margin-bottom: 12px;
+    }
+
+    .topic-subtitle {
+      font-size: 17px;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 24px;
+      max-width: 860px;
+    }
+
+    /* Action bar */
+    .actions-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .act-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 13.5px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .act-btn:hover {
+      background: var(--panel);
+      color: var(--hi);
+      border-color: #4a4a52;
+    }
+    .act-btn.active {
+      background: var(--raised);
+      color: var(--hi);
+      border-color: var(--hi);
+    }
+    .act-btn .circle-check {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1.5px solid var(--dim);
+      display: inline-block;
+    }
+    .act-btn.active .circle-check {
+      background: var(--hi);
+      border-color: var(--hi);
+    }
+    .act-btn span.badge-num {
+      font-size: 11.5px;
+      color: var(--dim);
+      margin-left: 2px;
+    }
+
+    /* Sub-read progress */
+    .tab-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12.5px;
+      color: #6a6a72;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .tab-prog-line {
+      width: 60px;
+      height: 2px;
+      background: var(--line-soft);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .tab-prog-line i {
+      display: block;
+      height: 100%;
+      background: var(--dim);
+      width: 0;
+      transition: width 0.3s ease;
+    }
+
+    /* ==========================================================================
+       SUB-TABS BAR (The clean text tabs with underline)
+       ========================================================================== */
+    .subtabs {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      border-bottom: 1px solid var(--line-soft);
+      margin-bottom: 30px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .subtabs::-webkit-scrollbar { display: none; }
+
+    .subtab {
+      background: none;
+      border: none;
+      padding: 10px 0 12px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--dim);
+      cursor: pointer;
+      white-space: nowrap;
+      position: relative;
+      font-family: var(--sans);
+      transition: color 0.15s;
+    }
+    .subtab:hover {
+      color: var(--text);
+    }
+    .subtab.on {
+      color: var(--hi);
+      font-weight: 600;
+    }
+    .subtab.on::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0; right: 0;
+      height: 2px;
+      background: var(--hi);
+    }
+
+    /* ==========================================================================
+       TWO-COLUMN CONTENT ROWS (Signature EVS notes layout)
+       ========================================================================== */
+    .content-pane {
+      display: none;
+      animation: tabFadeIn 0.18s var(--ease) forwards;
+    }
+    .content-pane.on {
+      display: block;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .row-list {
+      display: flex;
+      flex-direction: column;
+    }
+    .row-item {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 32px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .row-item:first-child {
+      padding-top: 4px;
+    }
+    .row-item:last-child {
+      border-bottom: none;
+    }
+
+    .row-term {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hi);
+      line-height: 1.45;
+    }
+    .row-term small {
+      display: block;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--dim);
+      margin-top: 3px;
+      font-family: var(--mono);
+    }
+
+    .row-desc {
+      font-size: 15.5px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .row-desc p {
+      margin-bottom: 10px;
+    }
+    .row-desc p:last-child {
+      margin-bottom: 0;
+    }
+    .row-desc ul {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+    .row-desc li {
+      margin-bottom: 6px;
+    }
+
+    /* Formula Block inside rows */
+    .eq-block {
+      background: var(--side);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    /* Simple Table inside rows */
+    .clean-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+    .clean-table th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--hi);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--side);
+    }
+    .clean-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line-soft);
+      color: var(--text);
+    }
+    .clean-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ==========================================================================
+       INTERACTIVE LAB / SIMULATOR (Clean, matte monochrome)
+       ========================================================================== */
+    .lab-box {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--side);
+      padding: 24px;
+      margin-top: 8px;
+    }
+    .lab-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .lab-canvas-card {
+      background: var(--bg);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 12px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lab-canvas-label {
+      position: absolute;
+      top: 10px; left: 12px;
+      font-size: 11px;
+      color: var(--dim);
+      font-family: var(--mono);
+      text-transform: uppercase;
+    }
+    canvas {
+      width: 100%;
+      height: 250px;
+    }
+
+    .lab-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      background: var(--panel);
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line-soft);
+      margin-bottom: 14px;
+    }
+    .lab-ctrl {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .lab-ctrl label {
+      font-size: 12.5px;
+      color: var(--dim);
+      display: flex;
+      justify-content: space-between;
+    }
+    .lab-ctrl input[type="range"] {
+      accent-color: var(--hi);
+    }
+
+    .lab-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .lab-btn {
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-family: var(--sans);
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--hi);
+      font-weight: 500;
+    }
+    .lab-btn:hover {
+      background: var(--raised);
+    }
+    .lab-readouts {
+      margin-left: auto;
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      font-family: var(--mono);
+      color: var(--dim);
+    }
+    .lab-readouts span b {
+      color: var(--hi);
+    }
+
+    /* Calculator */
+    .calc-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .calc-field label {
+      font-size: 12.5px;
+      color: var(--dim);
+    }
+    .calc-field input {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 7px 10px;
+      color: var(--hi);
+      font-family: var(--mono);
+      font-size: 14px;
+    }
+    .calc-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .calc-res {
+      display: flex;
+      flex-direction: column;
+    }
+    .calc-res small {
+      font-size: 12px;
+      color: var(--dim);
+    }
+    .calc-res strong {
+      font-family: var(--mono);
+      font-size: 20px;
+      color: var(--hi);
+      margin: 3px 0;
+    }
+    .calc-res em {
+      font-style: normal;
+      font-size: 11.5px;
+      color: #6a6a72;
+    }
+
+    /* ==========================================================================
+       RECALL MODE (Hides/blurs key terms to test memory)
+       ========================================================================== */
+    .recall {
+      transition: filter .2s, background-color .2s;
+      display: inline;
+    }
+    body.recall-mode .recall {
+      filter: blur(5px);
+      background: var(--raised);
+      border-radius: 3px;
+      user-select: none;
+      cursor: pointer;
+    }
+    body.recall-mode .recall:hover {
+      filter: blur(0);
+      background: transparent;
+    }
+
+    /* ==========================================================================
+       SEARCH OVERLAY MODAL (Ctrl + K)
+       ========================================================================== */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--veil);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 14vh;
+    }
+    .overlay.open { display: flex; }
+    .sbox {
+      width: 90%;
+      max-width: 560px;
+      background: var(--side);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0,0,0,.6);
+    }
+    .sbox input {
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--line-soft);
+      padding: 16px 20px;
+      font-size: 15.5px;
+      font-family: var(--sans);
+      color: var(--hi);
+      outline: none;
+    }
+    .sres {
+      max-height: 360px;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .sitem {
+      padding: 10px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    .sitem:hover { background: var(--panel); }
+    .sitem-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hi);
+    }
+    .sitem-sub {
+      font-size: 12.5px;
+      color: var(--dim);
+      margin-top: 2px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13.5px;
+      color: var(--hi);
+      z-index: 90;
+      display: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .side { transform: translateX(-100%); }
+      .side.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .menu-btn { display: block; }
+      .top { padding: 12px 18px; }
+      .view { padding: 24px 20px 80px; }
+      .row-item { grid-template-columns: 1fr; gap: 8px; }
+      .lab-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       SIDEBAR NAVIGATION
+       ========================================================================== -->
+  <aside class="side" id="side" aria-label="Topics">
+    <div class="brand">
+      <a href="#/t/intro">Kater's notes</a>
+      <p>Reversible pendulum, condensed</p>
+    </div>
+
+    <button class="search-btn" id="searchBtn" type="button">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5" stroke-linecap="round"/></svg>
+      Search notes
+      <kbd>Ctrl K</kbd>
+    </button>
+
+    <nav class="nav" id="navList">
+      <!-- Section 1 -->
+      <div class="nav-section-title">
+        <span>Week 1: Foundations & Apparatus</span>
+        <span class="count" id="cnt-sec1">0/4</span>
+      </div>
+      <a class="nav-item on" data-id="intro" onclick="loadTopic('intro')"><span class="dot"></span><span>What is Kater's Pendulum</span><span class="code">W1S1</span></a>
+      <a class="nav-item" data-id="apparatus" onclick="loadTopic('apparatus')"><span class="dot"></span><span>Physical Apparatus Anatomy</span><span class="code">W1S2</span></a>
+      <a class="nav-item" data-id="sensors" onclick="loadTopic('sensors')"><span class="dot"></span><span>What We Are Adding</span><span class="code">W1S3</span></a>
+      <a class="nav-item" data-id="why-sensors" onclick="loadTopic('why-sensors')"><span class="dot"></span><span>Why Add Digital Sensors</span><span class="code">W1S4</span></a>
+
+      <!-- Section 2 -->
+      <div class="nav-section-title">
+        <span>Week 2: Physics & Derivations</span>
+        <span class="count" id="cnt-sec2">0/5</span>
+      </div>
+      <a class="nav-item" data-id="mechanics" onclick="loadTopic('mechanics')"><span class="dot"></span><span>Compound Pendulum Mechanics</span><span class="code">W2S1</span></a>
+      <a class="nav-item" data-id="kater-thm" onclick="loadTopic('kater-thm')"><span class="dot"></span><span>Kater's Reversibility Theorem</span><span class="code">W2S2</span></a>
+      <a class="nav-item" data-id="bessel" onclick="loadTopic('bessel')"><span class="dot"></span><span>Bessel's Exact Equation</span><span class="code">W2S3</span></a>
+      <a class="nav-item" data-id="borda" onclick="loadTopic('borda')"><span class="dot"></span><span>Borda Finite-Amplitude Fix</span><span class="code">W2S4</span></a>
+      <a class="nav-item" data-id="damping" onclick="loadTopic('damping')"><span class="dot"></span><span>Damping & Quality Factor (Q)</span><span class="code">W2S5</span></a>
+
+      <!-- Section 3 -->
+      <div class="nav-section-title">
+        <span>Week 3: How The System Works</span>
+        <span class="count" id="cnt-sec3">0/4</span>
+      </div>
+      <a class="nav-item" data-id="gyro-method" onclick="loadTopic('gyro-method')"><span class="dot"></span><span>Gyro Zero-Crossing Engine</span><span class="code">W3S1</span></a>
+      <a class="nav-item" data-id="ir-method" onclick="loadTopic('ir-method')"><span class="dot"></span><span>IR Break-Beam Midpoint</span><span class="code">W3S2</span></a>
+      <a class="nav-item" data-id="sensor-fusion" onclick="loadTopic('sensor-fusion')"><span class="dot"></span><span>Sensor Fusion & Calibration</span><span class="code">W3S3</span></a>
+      <a class="nav-item" data-id="comparison" onclick="loadTopic('comparison')"><span class="dot"></span><span>Three-Method Comparison</span><span class="code">W3S4</span></a>
+
+      <!-- Section 4 -->
+      <div class="nav-section-title">
+        <span>Week 4: Data, Simulator & Viva</span>
+        <span class="count" id="cnt-sec4">0/3</span>
+      </div>
+      <a class="nav-item" data-id="telemetry" onclick="loadTopic('telemetry')"><span class="dot"></span><span>100 Hz CSV Telemetry & Data</span><span class="code">W4S1</span></a>
+      <a class="nav-item" data-id="simulator" onclick="loadTopic('simulator')"><span class="dot"></span><span>Interactive Simulator & Calc</span><span class="code">W4S2</span></a>
+      <a class="nav-item" data-id="viva" onclick="loadTopic('viva')"><span class="dot"></span><span>Viva Voce Exam Questions</span><span class="code">W4S3</span></a>
+    </nav>
+
+    <div class="side-foot">
+      <button type="button" id="shortcutsBtn">Shortcuts <kbd>?</kbd></button>
+      <a href="https://github.com" target="_blank" rel="noopener">v2.0 System</a>
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
+       MAIN VIEWPORT
+       ========================================================================== -->
+  <div class="main">
+    <!-- Top sticky header -->
+    <header class="top">
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Open topics">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 5h12M3 9h12M3 13h12"/></svg>
+      </button>
+      <div class="crumb" id="crumb">
+        Home <span class="slash">/</span> <span id="crumbTopic">What is Kater's Pendulum</span> <span class="slash">/</span> <span class="active" id="crumbTab">Definitions</span>
+      </div>
+
+      <div class="top-right">
+        <div class="prog">
+          <span id="progTxt">0 of 16 done</span>
+          <span class="prog-bar"><i id="progBar"></i></span>
+        </div>
+        <button class="tbtn" id="focusBtn" type="button" title="Toggle minimalist focus mode">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="9" r="5.6"/><path d="M8 6.2V9l1.8 1.3M6.3 1.8h3.4"/></svg>
+          <span id="focusTxt">Focus</span>
+        </button>
+        <button class="switch" id="recallBtn" type="button" title="Hide key terms to test yourself (R)">
+          <span class="knob"></span>
+          <span class="lbl">Recall</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="view" id="viewArea">
+      <!-- Injected dynamically by JavaScript -->
+    </main>
+  </div>
+
+  <!-- Search Modal -->
+  <div class="overlay" id="searchOverlay" role="dialog" aria-modal="true">
+    <div class="sbox">
+      <input id="searchInput" type="text" placeholder="Search every topic, derivation, component or viva question" autocomplete="off" spellcheck="false">
+      <div class="sres" id="searchResults"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ==========================================================================
+       COMPLETE CONTENT DATA & ENGINE SCRIPT
+       ========================================================================== -->
+  <script>
+    /* --------------------------------------------------------------------------
+       DATABASE OF ALL 16 TOPICS (Editorial, thoughtful, structured breakdown)
+       -------------------------------------------------------------------------- */
+    const topicsDB = {
+      // ------------------------------------------------------------------------
+      // W1S1: What is Kater's Pendulum
+      // ------------------------------------------------------------------------
+      "intro": {
+        code: "W1S1",
+        week: "Week 1, foundations and apparatus",
+        title: "Kater's reversible pendulum: definition, goal, motivation",
+        subtitle: "What the subject is, why simple pendulums fail in precision physics, and how Captain Kater's symmetry cancels the unknown moment of inertia.",
+        tabs: [
+          {
+            id: "definitions",
+            label: "Definitions",
+            rows: [
+              {
+                term: "The Goal of the Experiment",
+                sub: "Primary Objective",
+                desc: `<p>To measure the <b>local gravitational acceleration ($g$)</b> at our exact laboratory coordinates with an absolute precision better than <b>$\pm 0.02\%$</b>, using a rigid compound pendulum suspended from two conjugate knife edges.</p>`
+              },
+              {
+                term: "Kater's Reversible Pendulum",
+                sub: "Historical Instrument (1818)",
+                desc: `<p>An asymmetric, rigid metal bar fitted with <b>two parallel, hardened steel knife edges facing each other</b>. Invented by British physicist and army officer <b>Captain Henry Kater</b> to serve as an absolute gravimeter for the Great Trigonometrical Survey.</p>`
+              },
+              {
+                term: "The Reversibility Property",
+                sub: "Core Mathematical Invariance",
+                desc: `<p>If the mass distribution of the bar is adjusted so that the oscillation period is <b>identical</b> when suspended from Knife Edge 1 ($T_1$) and Knife Edge 2 ($T_2$), the distance between the two knife edges ($L$) becomes the <b>exact equivalent length of an ideal simple pendulum</b>.</p>
+                       <p>$$\\text{When } T_1 = T_2 = T \\implies g = \\frac{4\\pi^2 L}{T^2}$$</p>`
+              },
+              {
+                term: "Why it is called 'Reversible'",
+                sub: "Reciprocal Points",
+                desc: `<p>Because the <b>point of suspension</b> and the <b>center of oscillation</b> are mathematically interchangeable (reciprocal). Turning the pendulum upside down leaves the period completely unchanged.</p>`
+              }
+            ]
+          },
+          {
+            id: "flaw-simple",
+            label: "Simple Pendulum Flaws",
+            rows: [
+              {
+                term: "Why Not a Simple Pendulum?",
+                sub: "The String & Ball Problem",
+                desc: `<p>Elementary physics uses $T = 2\\pi\\sqrt{L/g}$. In an introductory lab, students hang a brass ball from a string. However, this is fundamentally incapable of precision gravimetry because:</p>
+                       <ul>
+                         <li><b>String Elasticity & Mass:</b> Strings stretch dynamically during the swing under tension $T = mg(3\\cos\\theta - 2\\cos\\theta_0)$, and the thread possesses non-zero distributed mass.</li>
+                         <li><b>Finite Bob Radius:</b> The bob is not a mathematical point mass. Its moment of inertia about its own center of mass ($I = \\frac{2}{5}mr^2$) shifts the effective length.</li>
+                         <li><b>Length Ambiguity:</b> Measuring the distance from the clamp clamp-jaw to the center of the sphere with a tape measure has an irreducible uncertainty of $\\pm 1\\text{ to } 2\\text{ mm}$ ($0.2\\%$ error).</li>
+                       </ul>`
+              },
+              {
+                term: "The Physical Pendulum Dilemma",
+                sub: "The Unknown Inertia",
+                desc: `<p>A solid rigid bar avoids string stretch, but introduces an even worse problem: its period depends on its <b>mass moment of inertia ($I$)</b>:</p>
+                       <p>$$T = 2\\pi \\sqrt{\\frac{I}{m g h}} = 2\\pi \\sqrt{\\frac{k^2 + h^2}{g h}}$$</p>
+                       <p>Here, $k$ is the <b>radius of gyration</b> about the center of mass. For a real apparatus with clamps, screws, and irregular bob shapes, $k$ <b>cannot be calculated analytically</b> from first principles.</p>`
+              }
+            ]
+          },
+          {
+            id: "kater-genius",
+            label: "Kater's Solution",
+            rows: [
+              {
+                term: "The Mathematical Cancellation",
+                sub: "Elimination of k and Mass",
+                desc: `<p>Kater discovered that by taking two pivots on opposite sides of the center of mass ($h_1$ and $h_2$) and equating the periods, <b>$k^2$ cancels out entirely in the algebra</b>.</p>
+                       <p>You never have to weigh the pendulum ($m$ cancels), you never have to calculate its moment of inertia ($k$ cancels), and you do not even need to know the center of mass location!</p>`
+              },
+              {
+                term: "Only One Length to Measure",
+                sub: "Knife-Edge Separation L",
+                desc: `<p>The only spatial quantity required is $L = h_1 + h_2$, which is the <b>distance between the two knife edges</b>. Because both knife edges are fixed razor blades mounted on the rigid rod, $L$ can be measured statically using a precision caliper or traveling comparator with uncertainty $< 0.05\\text{ mm}$.</p>`
+              }
+            ]
+          },
+          {
+            id: "digital-preview",
+            label: "Our Digital Plan",
+            rows: [
+              {
+                term: "What We Are Doing Differently",
+                sub: "Modern Sensor Fusion",
+                desc: `<p>We take the classical Kater's pendulum and augment it with an <b>embedded 6-DOF IMU (MPU-6050)</b> on the rod and an <b>optical IR break-beam photogate</b> at the base, streaming microsecond telemetry to an automated data processing suite.</p>`
+              },
+              {
+                term: "What We Measure Concurrently",
+                sub: "3 Parallel Channels",
+                desc: `<p>The system records every oscillation through three concurrent methods:</p>
+                       <ul>
+                         <li><b>IMU Gyro Zero-Crossings:</b> Turning point velocity reversals at $\\omega = 0$.</li>
+                         <li><b>IR Break-Beam Midpoints:</b> Central equilibrium crossings at $\\theta = 0$.</li>
+                         <li><b>Manual Stopwatch Entry:</b> Human timing baseline for direct pedagogical comparison.</li>
+                       </ul>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W1S2: Physical Apparatus Anatomy
+      // ------------------------------------------------------------------------
+      "apparatus": {
+        code: "W1S2",
+        week: "Week 1, foundations and apparatus",
+        title: "Physical apparatus anatomy: mechanics and components",
+        subtitle: "A detailed deconstruction of every mechanical part on the lab bench, its material, and why it is placed in its specific position.",
+        tabs: [
+          {
+            id: "rod-pivots",
+            label: "Rod & Knife Edges",
+            rows: [
+              {
+                term: "The Main Rigid Bar",
+                sub: "Compound Body",
+                desc: `<p>A rigid, uniform metal bar made of <b>brass or non-magnetic stainless steel</b>, typically $1.0\\text{ to } 1.2\\text{ meters}$ in length with a square or circular cross-section. It holds all movable attachments without flexing under swing forces.</p>`
+              },
+              {
+                term: "Knife Edges K1 and K2",
+                sub: "Hardened Steel Prisms",
+                desc: `<p>Two hardened triangular steel wedges mounted along the rod, pointing inward toward each other. The razor-sharp edge of each wedge forms a line pivot resting on an agate bearing plate.</p>
+                       <ul>
+                         <li><b>Distance $L$:</b> Set to approximately $1.000\\text{ m}$, establishing an oscillation period near $2.0\\text{ seconds}$.</li>
+                         <li><b>Reversal:</b> For Trial 1, Knife Edge 1 rests on the plate. For Trial 2, the entire rod is inverted upside down so Knife Edge 2 rests on the plate.</li>
+                       </ul>`
+              },
+              {
+                term: "Agate Bearing Plates",
+                sub: "Low-Friction Support",
+                desc: `<p>Polished horizontal agate or hardened steel plates mounted on a heavy, vibration-isolated wall bracket. Agate is chosen because it resists deformation under the high contact pressure of the sharp knife edge, minimizing rolling friction.</p>`
+              }
+            ]
+          },
+          {
+            id: "bobs-weights",
+            label: "Weights & Cylinders",
+            rows: [
+              {
+                term: "Heavy Brass Bob (Cylinder A)",
+                sub: "Mass Asymmetry Creator",
+                desc: `<p>A solid brass cylinder of mass $\\approx 1.0\\text{ to } 1.5\\text{ kg}$ clamped firmly near Knife Edge 1. Its purpose is to create a deliberate <b>mass asymmetry</b>, pulling the center of mass (CM) much closer to Knife Edge 1 ($h_1 < h_2$).</p>
+                       <p><b>Why Asymmetry is Mandatory:</b> If the pendulum were completely symmetric ($h_1 = h_2$), then $h_1 - h_2 = 0$. In Kater's theorem, we divide by $(h_1 - h_2)$—a symmetric bar causes division by zero and makes Bessel's formula mathematically indeterminate.</p>`
+              },
+              {
+                term: "Light Bob / Wooden Cylinder (B)",
+                sub: "Counterbalance",
+                desc: `<p>A hollow brass or hardwood cylinder of mass $\\approx 0.3\\text{ to } 0.5\\text{ kg}$ positioned near Knife Edge 2. It balances the overall moment of inertia so that both periods fall in a practical timing range without canceling the center of mass asymmetry.</p>`
+              },
+              {
+                term: "Micrometer Fine Slider (C)",
+                sub: "Fine Tuning Element",
+                desc: `<p>A small brass collar ($\approx 50\\text{ grams}$) mounted on a threaded rod or fine slider between the two knife edges. Rotating or sliding it allows micro-adjustments of the period by fractions of a millisecond without moving the heavy bob.</p>`
+              }
+            ]
+          },
+          {
+            id: "cm-location",
+            label: "Center of Mass (CM)",
+            rows: [
+              {
+                term: "Physical Meaning of h1 and h2",
+                sub: "Distances to Center of Mass",
+                desc: `<p>Let the Center of Mass (CM) of the assembled pendulum be at position $G$:</p>
+                       <ul>
+                         <li><b>$h_1$:</b> Distance from Knife Edge 1 to CM ($G$).</li>
+                         <li><b>$h_2$:</b> Distance from Knife Edge 2 to CM ($G$).</li>
+                         <li><b>Total Separation:</b> $L = h_1 + h_2$.</li>
+                       </ul>`
+              },
+              {
+                term: "How CM is Measured Experimentally",
+                sub: "Knife-Edge Balance Test",
+                desc: `<p>Before hanging the pendulum on the wall, it is placed horizontally on a sharp balancing wedge. The balance point is marked with a pencil. Measuring the distance from Knife Edge 1 to this balance mark gives $h_1$; measuring to Knife Edge 2 gives $h_2$.</p>
+                       <p>The difference $(h_1 - h_2)$ is typically $0.04\\text{ to } 0.08\\text{ m}$, which is used in Bessel's exact formula.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W1S3: What We Are Adding
+      // ------------------------------------------------------------------------
+      "sensors": {
+        code: "W1S3",
+        week: "Week 1, foundations and apparatus",
+        title: "What we are adding: the digital instrumentation suite",
+        subtitle: "How low-cost micro-electromechanical sensors and an infrared photogate are physically mounted to the apparatus without disrupting its physics.",
+        tabs: [
+          {
+            id: "mpu6050",
+            label: "MPU-6050 IMU",
+            rows: [
+              {
+                term: "MPU-6050 6-DOF Sensor",
+                sub: "On-Rod Telemetry",
+                desc: `<p>A micro-electromechanical (MEMS) chip containing a <b>3-axis gyroscope</b> ($\pm 250^\circ/\text{s}$) and a <b>3-axis accelerometer</b> ($\pm 2g$). It is mounted flat along the pendulum rod with high-bond adhesive foam tape.</p>`
+              },
+              {
+                term: "Role of the Gyroscope",
+                sub: "Angular Velocity Tracking",
+                desc: `<p>Measures the instantaneous angular rate $\\omega(t)$ in $^\circ/\\text{s}$. At the turning points of the swing (the oscillation peaks), the velocity comes to an exact stop: <b>$\\omega = 0$</b>. By capturing this zero-crossing, the system records the exact turnaround timestamp.</p>`
+              },
+              {
+                term: "Role of the Accelerometer",
+                sub: "Dynamic Tilt & Amplitude",
+                desc: `<p>Measures the gravity vector components ($a_{\\text{rod}}$ and $a_{\\text{perp}}$) to calculate the instantaneous tilt angle $\\theta(t)$. This allows the system to extract the <b>exact peak amplitude $\\theta_0$ of every swing</b> for Borda finite-amplitude correction.</p>`
+              },
+              {
+                term: "Inertial Impact (< 0.1%)",
+                sub: "Negligible Mass Burden",
+                desc: `<p>The MPU-6050 breakout board weighs only <b>$2.3\\text{ grams}$</b>. Mounted onto a $3.0\\text{ kg}$ pendulum bar, it represents less than $0.08\\%$ of the total mass, having zero noticeable impact on period symmetry.</p>`
+              }
+            ]
+          },
+          {
+            id: "ir-gate",
+            label: "IR Photogate & Flag",
+            rows: [
+              {
+                term: "IR Break-Beam Sensor",
+                sub: "Stationary Base Optical Gate",
+                desc: `<p>An optical U-bracket containing an infrared LED emitter facing a high-speed phototransistor receiver. It is mounted on an independent stationary lab tripod directly below the pendulum at the central equilibrium position ($\\theta = 0$).</p>`
+              },
+              {
+                term: "The Optical Flag",
+                sub: "Opaque Blade",
+                desc: `<p>A lightweight, rigid $3\\text{ mm}$-wide opaque plastic blade clamped to the bottom tip of the pendulum rod. As the pendulum swings through the bottom of its arc, the blade slices through the infrared beam, dropping the sensor output from HIGH ($3.3\\text{V}$) to LOW ($0\\text{V}$).</p>`
+              },
+              {
+                term: "Why Positioned at the Center?",
+                sub: "Maximum Velocity Point",
+                desc: `<p>At the center of swing, potential energy is completely converted to kinetic energy—velocity is at its maximum ($v_{\\text{max}} = L\\omega_{\\text{max}}$). The flag slices through the beam in less than $10\\text{ ms}$, creating ultra-steep digital signal edges with sub-millisecond transition sharpness.</p>`
+              }
+            ]
+          },
+          {
+            id: "nodemcu",
+            label: "NodeMCU ESP8266",
+            rows: [
+              {
+                term: "The Embedded Brain",
+                sub: "Microsecond Hardware Interrupts",
+                desc: `<p>A NodeMCU ESP8266 microcontroller board wired to both sensors. Instead of slow software polling, it uses a <b>hardware interrupt service routine (ISR)</b> on pin D5 to capture the exact microsecond timestamps (\`micros()\`) of IR beam transitions.</p>`
+              },
+              {
+                term: "Hardware Pinout Table",
+                sub: "Electrical Connections",
+                desc: `<table class="clean-table">
+                         <thead>
+                           <tr><th>NodeMCU Pin</th><th>Sensor Pin</th><th>Protocol / Function</th></tr>
+                         </thead>
+                         <tbody>
+                           <tr><td><b>D1 (GPIO 5)</b></td><td>MPU-6050 SCL</td><td>I2C Clock (400 kHz Fast Mode)</td></tr>
+                           <tr><td><b>D2 (GPIO 4)</b></td><td>MPU-6050 SDA</td><td>I2C Data line</td></tr>
+                           <tr><td><b>D5 (GPIO 14)</b></td><td>IR Sensor OUT</td><td>Hardware Interrupt (\`CHANGE\`)</td></tr>
+                           <tr><td><b>3V3 & GND</b></td><td>Sensor Rails</td><td>Clean 3.3V power (&lt; 15 mA total current)</td></tr>
+                           <tr><td><b>Micro-USB</b></td><td>PC USB Port</td><td>115,200 baud UART serial stream</td></tr>
+                         </tbody>
+                       </table>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W1S4: Why Add Digital Sensors
+      // ------------------------------------------------------------------------
+      "why-sensors": {
+        code: "W1S4",
+        week: "Week 1, foundations and apparatus",
+        title: "Why add digital sensors: eliminating the human error floor",
+        subtitle: "A direct examination of stopwatch human reaction time, amplitude decay errors, and how microsecond telemetry transforms experimental accuracy.",
+        tabs: [
+          {
+            id: "human-error",
+            label: "Human Stopwatch Limits",
+            rows: [
+              {
+                term: "Human Visual Reaction Time",
+                sub: "Neurological Latency",
+                desc: `<p>When a human student watches a pendulum cross a mark and presses a stopwatch button, visual recognition, neural conduction, and finger actuation introduce a latency of <b>$\\pm 150\\text{ to } 250\\text{ ms}$</b>.</p>
+                       <p>Because the student clicks twice (start and stop), the total timing jitter is $\\Delta t = \\sqrt{2} \\times 200\\text{ ms} \\approx \\mathbf{\\pm 280\\text{ ms}}$.</p>`
+              },
+              {
+                term: "Why Dividing by 20 Swings Isn't Enough",
+                sub: "The Averaging Fallacy",
+                desc: `<p>To reduce this error, lab manuals instruct students to time 20 full swings ($t_{\\text{total}} \\approx 40\\text{ s}$) and divide by 20:</p>
+                       <p>$$\\Delta T = \\frac{280\\text{ ms}}{20} = \\pm 14\\text{ ms} \\implies \\frac{\\Delta T}{T} \\approx \\frac{0.014}{2.0} = \\mathbf{0.70\\%}$$</p>
+                       <p>This is still <b>$35\\times$ worse</b> than the precision required to verify Bessel's formula!</p>`
+              },
+              {
+                term: "The Blindness to Amplitude Decay",
+                sub: "The Invisible Drag Problem",
+                desc: `<p>While a student counts 20 swings, air drag steadily shrinks the amplitude from $8^\circ$ down to $2^\circ$. As amplitude decays, the period <i>physically changes</i> from swing to swing. A human stopwatch averages this decay blindly into a single smeared number, with zero ability to correct for it.</p>`
+              }
+            ]
+          },
+          {
+            id: "sensor-perks",
+            label: "What Automation Solves",
+            rows: [
+              {
+                term: "Zero Reaction Time",
+                sub: "Hardware Edge Precision",
+                desc: `<p>The IR break-beam sensor triggers within <b>$2\\text{ microseconds}$</b>. The MPU-6050 gyroscope samples at $100\\text{ Hz}$ and uses sub-sample linear interpolation to locate zero-crossings down to <b>$< 0.5\\text{ milliseconds}$</b>.</p>`
+              },
+              {
+                term: "Per-Cycle Amplitude Correction",
+                sub: "Dynamic Borda Correction",
+                desc: `<p>Because the accelerometer measures the exact peak angle $\\theta_0$ of <i>every individual swing</i>, the software corrects each period cycle-by-cycle before calculating the mean, completely eliminating finite-amplitude error.</p>`
+              },
+              {
+                term: "Full Experimental Transparency",
+                sub: "Every Swing Recorded",
+                desc: `<p>Instead of one stopwatch number, the system collects thousands of telemetry rows, displaying the live phase plot, angular velocity curve, decay envelope, and confidence intervals in real time.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W2S1: Compound Pendulum Mechanics
+      // ------------------------------------------------------------------------
+      "mechanics": {
+        code: "W2S1",
+        week: "Week 2, physics and derivations",
+        title: "Compound pendulum mechanics: the physical governing equations",
+        subtitle: "Deriving the rotational equation of motion, mass moment of inertia, and natural oscillation frequency from fundamental Newtonian mechanics.",
+        tabs: [
+          {
+            id: "derivation",
+            label: "Equation of Motion",
+            rows: [
+              {
+                term: "Rotational Second Law",
+                sub: "Torque & Angular Acceleration",
+                desc: `<p>Consider a rigid body of mass $m$ suspended about a horizontal axis at distance $h$ from its center of mass (CM). When displaced by angle $\\theta$, gravity exerts a restoring torque $\\tau$:</p>
+                       <div class="eq-block">$$\\tau = -m g h \\sin\\theta$$</div>
+                       <p>By Newton's rotational law $\\tau = I \\frac{d^2\\theta}{dt^2}$, where $I$ is the mass moment of inertia about the suspension axis:</p>
+                       <div class="eq-block">$$I \\frac{d^2\\theta}{dt^2} + m g h \\sin\\theta = 0$$</div>`
+              },
+              {
+                term: "Small-Angle Approximation",
+                sub: "Taylor Expansion sin θ ≈ θ",
+                desc: `<p>For small oscillations ($\\theta \\ll 1\\text{ rad}$, typically $\\theta < 0.1\\text{ rad} \\approx 5.7^\circ$), we use $\\sin\\theta \\approx \\theta$:</p>
+                       <div class="eq-block">$$\\frac{d^2\\theta}{dt^2} + \\left(\\frac{m g h}{I}\\right) \\theta = 0$$</div>
+                       <p>This is the canonical differential equation for simple harmonic motion $\\ddot{\\theta} + \\omega_0^2 \\theta = 0$, with natural frequency $\\omega_0 = \\sqrt{\\frac{m g h}{I}}$.</p>`
+              }
+            ]
+          },
+          {
+            id: "parallel-axis",
+            label: "Parallel Axis & Radius of Gyration",
+            rows: [
+              {
+                term: "Parallel Axis Theorem",
+                sub: "Steiner's Theorem",
+                desc: `<p>The moment of inertia $I$ about the knife edge is related to the moment of inertia about the center of mass $I_{\\text{cm}}$ by:</p>
+                       <div class="eq-block">$$I = I_{\\text{cm}} + m h^2$$</div>`
+              },
+              {
+                term: "Radius of Gyration (k)",
+                sub: "Shape Parameter",
+                desc: `<p>We define the <b>radius of gyration</b> $k$ about the center of mass such that $I_{\\text{cm}} = m k^2$. Substituting into the inertia equation:</p>
+                       <div class="eq-block">$$I = m(k^2 + h^2)$$</div>
+                       <p>Substituting $I$ back into the period equation $T = 2\\pi / \\omega_0$:</p>
+                       <div class="eq-block">$$T = 2\\pi \\sqrt{\\frac{I}{mgh}} = 2\\pi \\sqrt{\\frac{m(k^2 + h^2)}{mgh}} = \\mathbf{2\\pi \\sqrt{\\frac{k^2 + h^2}{gh}}}$$</div>`
+              },
+              {
+                term: "The Fundamental Problem",
+                sub: "Why We Can't Solve for g Yet",
+                desc: `<p>In this equation, $g$ is tangled up with $k^2$ and $h$. Unless we know the precise radius of gyration $k$, we cannot calculate $g$. This is where Kater's theorem enters.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W2S2: Kater's Reversibility Theorem
+      // ------------------------------------------------------------------------
+      "kater-thm": {
+        code: "W2S2",
+        week: "Week 2, physics and derivations",
+        title: "Kater's reversibility theorem: the algebraic cancellation",
+        subtitle: "Step-by-step derivation showing how subtracting the two squared period equations completely wipes out the unknown radius of gyration.",
+        tabs: [
+          {
+            id: "derivation-steps",
+            label: "Step-by-Step Derivation",
+            rows: [
+              {
+                term: "Step 1: Set Up Both Pivot Equations",
+                sub: "Pivot 1 and Pivot 2",
+                desc: `<p>Hang the pendulum from Knife Edge 1 (distance $h_1$ from CM) and Knife Edge 2 (distance $h_2$ from CM):</p>
+                       <div class="eq-block">$$T_1 = 2\\pi \\sqrt{\\frac{k^2 + h_1^2}{g h_1}}, \\qquad T_2 = 2\\pi \\sqrt{\\frac{k^2 + h_2^2}{g h_2}}$$</div>`
+              },
+              {
+                term: "Step 2: Square and Rearrange",
+                sub: "Isolate k² + h²",
+                desc: `<p>Squaring both sides and multiplying by $g h$:</p>
+                       <div class="eq-block">$$\\frac{g h_1 T_1^2}{4\\pi^2} = k^2 + h_1^2 \\quad \\text{--- (Eq. 1)}$$</div>
+                       <div class="eq-block">$$\\frac{g h_2 T_2^2}{4\\pi^2} = k^2 + h_2^2 \\quad \\text{--- (Eq. 2)}$$</div>`
+              },
+              {
+                term: "Step 3: Subtract Equation 2 from Equation 1",
+                sub: "The Critical Cancellation",
+                desc: `<p>Subtract Eq. 2 from Eq. 1. Notice what happens to the unknown $k^2$ on the right side:</p>
+                       <div class="eq-block">$$\\frac{g}{4\\pi^2} (h_1 T_1^2 - h_2 T_2^2) = (k^2 + h_1^2) - (k^2 + h_2^2) = h_1^2 - h_2^2$$</div>
+                       <p>Using the algebraic identity $a^2 - b^2 = (a - b)(a + b)$:</p>
+                       <div class="eq-block">$$\\frac{g}{4\\pi^2} (h_1 T_1^2 - h_2 T_2^2) = (h_1 - h_2)(h_1 + h_2)$$</div>`
+              },
+              {
+                term: "Step 4: Impose the Reversibility Condition",
+                sub: "When T1 = T2 = T",
+                desc: `<p>When the weights are adjusted so that both periods are identical ($T_1 = T_2 = T$):</p>
+                       <div class="eq-block">$$\\frac{g T^2}{4\\pi^2} (h_1 - h_2) = (h_1 - h_2)(h_1 + h_2)$$</div>
+                       <p>Because the pendulum is asymmetric, $h_1 \\ne h_2$, so $(h_1 - h_2) \\ne 0$. Dividing both sides by $(h_1 - h_2)$:</p>
+                       <div class="eq-block">$$\\frac{g T^2}{4\\pi^2} = h_1 + h_2 = L \\implies \\mathbf{g = \\frac{4\\pi^2 L}{T^2}}$$</div>`
+              }
+            ]
+          },
+          {
+            id: "implications",
+            label: "Physical Significance",
+            rows: [
+              {
+                term: "The Radius of Gyration Vanished",
+                sub: "Complete Cancellation",
+                desc: `<p>Notice that $k$ has completely vanished from the final equation. It does not matter how complex the shape of the bar, bobs, or screws is—as long as the periods match, its moment of inertia does not affect the calculation of $g$.</p>`
+              },
+              {
+                term: "The Center of Mass Location Vanished",
+                sub: "Only L = h1 + h2 Matters",
+                desc: `<p>Neither $h_1$ nor $h_2$ appears individually in the final formula—only their sum $L = h_1 + h_2$, which is simply the fixed distance between the knife edges.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W2S3: Bessel's Exact Equation
+      // ------------------------------------------------------------------------
+      "bessel": {
+        code: "W2S3",
+        week: "Week 2, physics and derivations",
+        title: "Bessel's exact formula: handling unequal periods",
+        subtitle: "Why students do not need to spend 4 hours tuning weights to match periods, and how Friedrich Bessel's formula solves unequal periods exactly.",
+        tabs: [
+          {
+            id: "formula",
+            label: "The Formula",
+            rows: [
+              {
+                term: "The Practical Laboratory Dilemma",
+                sub: "Tedious Micro-Tuning",
+                desc: `<p>In practice, tuning the weights so that $T_1 = T_2$ down to $0.0001\\text{ s}$ can take hours of trial and error. German astronomer <b>Friedrich Bessel</b> derived an exact relation that works even when $T_1 \\ne T_2$.</p>`
+              },
+              {
+                term: "Bessel's Exact Gravitational Formula",
+                sub: "Universal Two-Term Equation",
+                desc: `<div class="eq-block">$$g_{\\text{Bessel}} = \\frac{8\\pi^2}{\\displaystyle \\frac{T_1^2 + T_2^2}{L} + \\frac{T_1^2 - T_2^2}{h_1 - h_2}}$$</div>
+                       <p>Where:</p>
+                       <ul>
+                         <li><b>$T_1, T_2$:</b> Periods measured from Knife Edge 1 and Knife Edge 2.</li>
+                         <li><b>$L = h_1 + h_2$:</b> Total knife-edge separation (e.g., $1.000\\text{ m}$).</li>
+                         <li><b>$h_1 - h_2$:</b> Distance between the center of mass and the midpoint of the knife edges.</li>
+                       </ul>`
+              },
+              {
+                term: "Deconstructing the Two Terms",
+                sub: "Symmetric vs Asymmetric Contributions",
+                desc: `<p><b>Term 1 (Primary Symmetric Term):</b> $\\frac{T_1^2 + T_2^2}{L}$. This accounts for over <b>$99.8\\%$</b> of the denominator.</p>
+                       <p><b>Term 2 (Asymmetry Correction):</b> $\\frac{T_1^2 - T_2^2}{h_1 - h_2}$. If $T_1$ and $T_2$ are close, $(T_1^2 - T_2^2) \\approx 0$, acting as a tiny perturbation correction.</p>`
+              }
+            ]
+          },
+          {
+            id: "ideal-approx",
+            label: "The Ideal Approximation",
+            rows: [
+              {
+                term: "When |T1 - T2| < 0.05 s",
+                sub: "Simplified Average Formula",
+                desc: `<p>If the period difference is small ($|T_1 - T_2| \\le 0.05\\text{ s}$), the second term drops below experimental noise. Bessel's formula reduces to:</p>
+                       <div class="eq-block">$$g_{\\text{ideal}} = \\frac{4\\pi^2 L}{T_{\\text{avg}}^2}, \\qquad \\text{where } T_{\\text{avg}} = \\frac{T_1 + T_2}{2}$$</div>`
+              },
+              {
+                term: "Our Software Computes Both",
+                sub: "Direct Validation",
+                desc: `<p>Our application computes both $g_{\\text{Bessel}}$ and $g_{\\text{ideal}}$, displaying the difference in percentage points so students can witness the exact magnitude of the asymmetry term.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W2S4: Borda Finite-Amplitude Fix
+      // ------------------------------------------------------------------------
+      "borda": {
+        code: "W2S4",
+        week: "Week 2, physics and derivations",
+        title: "Borda's finite-amplitude correction: the small-angle fix",
+        subtitle: "Why the simple harmonic formula is an approximation for finite swings, and how we dynamically recover the true infinitesimal period T0.",
+        tabs: [
+          {
+            id: "theory",
+            label: "The Physics",
+            rows: [
+              {
+                term: "The Failure of sin θ ≈ θ at Real Angles",
+                sub: "Finite Amplitude Lengthening",
+                desc: `<p>The simple harmonic formula assumes an infinitesimal swing ($\\theta \\to 0$). For any real finite swing amplitude $\\theta_0$, the restoring torque is slightly weaker than linear ($mg h \\sin\\theta < mg h \\theta$), which causes the pendulum to take <b>longer to complete a cycle</b>.</p>`
+              },
+              {
+                term: "The Elliptic Integral Expansion",
+                sub: "Exact Solution",
+                desc: `<p>The exact period for finite peak amplitude $\\theta_0$ is given by the complete elliptic integral of the first kind $K(\\sin(\\theta_0/2))$:</p>
+                       <div class="eq-block">$$T(\\theta_0) = T_0 \\left[ 1 + \\frac{1}{4}\\sin^2\\left(\\frac{\\theta_0}{2}\\right) + \\frac{9}{64}\\sin^4\\left(\\frac{\\theta_0}{2}\\right) + \\dots \\right]$$</div>
+                       <p>Using small-angle Taylor expansion $\\sin(\\theta_0/2) \\approx \\theta_0/2$:</p>
+                       <div class="eq-block">$$T(\\theta_0) \\approx T_0 \\left(1 + \\frac{\\theta_0^2}{16}\\right)$$</div>`
+              },
+              {
+                term: "Numerical Impact at 5 Degrees",
+                sub: "A Real Laboratory Example",
+                desc: `<p>Suppose the pendulum is released at $\\theta_0 = 5^\circ = 0.08727\\text{ rad}$:</p>
+                       <div class="eq-block">$$\\frac{\\theta_0^2}{16} = \\frac{(0.08727)^2}{16} = 0.000476 \\quad (0.048\\% \\text{ elongation})$$</div>
+                       <p>For $T = 2.0000\\text{ s}$, this elongates the period by <b>$0.95\\text{ ms}$</b>. Left uncorrected, this shifts calculated $g$ by <b>$+0.01\\text{ m/s}^2$</b>, wiping out the precision of the experiment!</p>`
+              }
+            ]
+          },
+          {
+            id: "correction-math",
+            label: "Borda's Inversion",
+            rows: [
+              {
+                term: "Recovering Infinitesimal Period T0",
+                sub: "Borda's Reduction Formula",
+                desc: `<p>To recover the pure, true period $T_0$ corresponding to $\\theta \\to 0$, we invert the series:</p>
+                       <div class="eq-block">$$\\mathbf{T_0 = T_{\\text{measured}} \\left(1 - \\frac{\\theta_0^2}{16}\\right)}$$</div>
+                       <p>Where $\\theta_0$ is expressed in <b>radians</b>.</p>`
+              },
+              {
+                term: "How Our IMU Does It Dynamically",
+                sub: "Cycle-by-Cycle Peak Tracking",
+                desc: `<p>A student using a stopwatch cannot measure the peak angle of every swing as it decays. Our MPU-6050 accelerometer detects the exact peak angle $\\theta_0$ of every half-swing, allowing the software to apply Borda's correction dynamically to every single cycle recorded.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W2S5: Damping & Quality Factor
+      // ------------------------------------------------------------------------
+      "damping": {
+        code: "W2S5",
+        week: "Week 2, physics and derivations",
+        title: "Damping mechanics and quality factor (Q)",
+        subtitle: "Quantifying viscous air drag and knife-edge contact friction using logarithmic decrements and linear regression of decay envelopes.",
+        tabs: [
+          {
+            id: "decay-model",
+            label: "Damping Physics",
+            rows: [
+              {
+                term: "Viscous Damped Equation of Motion",
+                sub: "Air Drag + Friction",
+                desc: `<p>Under linear viscous air drag and knife-edge rolling friction, the equation of motion is:</p>
+                       <div class="eq-block">$$\\frac{d^2\\theta}{dt^2} + 2\\gamma \\frac{d\\theta}{dt} + \\omega_0^2 \\theta = 0$$</div>
+                       <p>Where $\\gamma$ is the <b>damping attenuation coefficient</b> ($\\text{s}^{-1}$). For weak damping ($\\gamma \\ll \\omega_0$), the solution is an exponentially decaying oscillation:</p>
+                       <div class="eq-block">$$\\theta(t) = \\theta_0 e^{-\\gamma t} \\cos(\\omega_d t + \\phi)$$</div>`
+              },
+              {
+                term: "Logarithmic Decrement (δ)",
+                sub: "Per-Cycle Amplitude Ratio",
+                desc: `<p>Evaluating the amplitude at consecutive cycles $n$ and $n+1$ ($t = nT$):</p>
+                       <div class="eq-block">$$\\delta = \\ln\\left(\\frac{\\theta_n}{\\theta_{n+1}}\\right) = \\gamma T$$</div>
+                       <p>This constant $\\delta$ is the <b>logarithmic decrement</b>, measuring the fractional energy lost per cycle.</p>`
+              },
+              {
+                term: "Quality Factor (Q)",
+                sub: "Energy Retention Metric",
+                desc: `<p>The Quality Factor $Q$ represents the ratio of total energy stored in the oscillator to the energy dissipated per radian:</p>
+                       <div class="eq-block">$$Q = \\frac{\\omega_0}{2\\gamma} = \\frac{\\pi}{\\delta}$$</div>
+                       <p>A well-built Kater's pendulum has $Q > 1500$, indicating that it retains over $99.8\\%$ of its mechanical energy from one swing to the next.</p>`
+              }
+            ]
+          },
+          {
+            id: "fitting",
+            label: "Log-Linear Regression",
+            rows: [
+              {
+                term: "Linearizing the Exponential",
+                sub: "Log Transformation",
+                desc: `<p>Taking the natural logarithm of the envelope equation $\\theta_n = \\theta_0 e^{-\\delta n}$:</p>
+                       <div class="eq-block">$$\\ln(\\theta_n) = \\ln(\\theta_0) - \\delta \\cdot n$$</div>
+                       <p>This is the equation of a straight line $y = mx + c$, where the slope is $m = -\\delta$.</p>`
+              },
+              {
+                term: "Software Execution",
+                sub: "NumPy Polyfit",
+                desc: `<p>During a trial, the Python desktop application logs the peak amplitude $\\theta_n$ of every cycle. When recording stops, it performs a 1st-degree polynomial fit of $\\ln(\\theta_n)$ vs $n$ to extract $\\delta$, $\\gamma = \\delta / T$, and $Q = \\pi / \\delta$ with $R^2 > 0.99$.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W3S1: Gyro Zero-Crossing Engine
+      // ------------------------------------------------------------------------
+      "gyro-method": {
+        code: "W3S1",
+        week: "Week 3, how the system works",
+        title: "Gyro zero-crossing engine: reversal detection at swing peaks",
+        subtitle: "How the 100 Hz gyroscope stream detects velocity turning points (ω = 0) with sub-sample linear interpolation and noise gating.",
+        tabs: [
+          {
+            id: "zero-cross",
+            label: "Zero-Crossing Detection",
+            rows: [
+              {
+                term: "The Turning Point Principle",
+                sub: "Extremes of Oscillation",
+                desc: `<p>At the highest point of each swing, the pendulum rod momentarily halts before reversing direction. At this exact turnaround timestamp, the <b>angular velocity is zero ($\\omega = 0$)</b>.</p>`
+              },
+              {
+                term: "Sub-Sample Linear Interpolation",
+                sub: "Overcoming 10 ms Discretization",
+                desc: `<p>Because the MPU-6050 samples at $100\\text{ Hz}$, readings arrive every $10\\text{ ms}$. If reading $k-1$ is positive ($\\omega_{k-1} > 0$) and reading $k$ is negative ($\\omega_k < 0$), the zero crossing occurred between $t_{k-1}$ and $t_k$.</p>
+                       <div class="eq-block">$$t_{\\text{zero}} = t_{k-1} - \\omega_{k-1} \\left(\\frac{t_k - t_{k-1}}{\\omega_k - \\omega_{k-1}}\\right)$$</div>
+                       <p>This linear interpolation reduces timing jitter from $10\\text{ ms}$ down to <b>$< 0.3\\text{ ms}$</b>!</p>`
+              }
+            ]
+          },
+          {
+            id: "noise-gates",
+            label: "Noise Rejection Gates",
+            rows: [
+              {
+                term: "Gate 1: Peak Velocity Threshold",
+                sub: "min_peak_omega = 3.0°/s",
+                desc: `<p>Sensor noise near $\\omega = 0$ could cause multiple false zero crossings. To prevent this, every half-swing must achieve an absolute peak velocity of at least <b>$3.0^\circ/\\text{s}$</b> before a zero crossing is armed.</p>`
+              },
+              {
+                term: "Gate 2: Direction Alternation",
+                sub: "Left -> Right -> Left",
+                desc: `<p>Reversals must alternate strictly: a Left reversal must be followed by a Right reversal. Consecutive crossings in the same direction are discarded.</p>`
+              },
+              {
+                term: "Gate 3: Glitch Rejection Lockout",
+                sub: "min_half_period = 0.35 s",
+                desc: `<p>Any event occurring within $0.35\\text{ seconds}$ of the last reversal is rejected as high-frequency vibration or mechanical bounce.</p>`
+              },
+              {
+                term: "Full Period Definition",
+                sub: "Two Full Half-Swings",
+                desc: `<p>A complete oscillation consists of two half-swings. Full periods are recorded on every <b>Right reversal</b>: $T_{\\text{gyro}} = t_{\\text{zero, right}}[k] - t_{\\text{zero, right}}[k-1]$.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W3S2: IR Break-Beam Midpoint
+      // ------------------------------------------------------------------------
+      "ir-method": {
+        code: "W3S2",
+        week: "Week 3, how the system works",
+        title: "IR break-beam midpoint engine: optical center timing",
+        subtitle: "Why the entry and exit average (t1 + t2)/2 mathematically cancels both flag width and swing velocity, yielding pure microsecond transit.",
+        tabs: [
+          {
+            id: "midpoint-proof",
+            label: "The Midpoint Miracle",
+            rows: [
+              {
+                term: "The Photogate Problem",
+                sub: "Finite Blade Width",
+                desc: `<p>A physical flag has width $w$ (e.g. $3\\text{ mm}$). If you only trigger on the leading edge (when the flag first blocks the beam), the trigger time depends on how fast the pendulum is moving:</p>
+                       <div class="eq-block">$$t_{\\text{enter}} = t_{\\text{center}} - \\frac{w}{2v}$$</div>
+                       <p>As the pendulum damps and $v$ decreases, the trigger shifts later in time, introducing systematic period drift!</p>`
+              },
+              {
+                term: "The Midpoint Formula Proof",
+                sub: "Mathematical Cancellation",
+                desc: `<p>Our firmware captures <b>both the entry time ($t_1$) and exit time ($t_2$)</b>:</p>
+                       <ul>
+                         <li><b>Entry:</b> $t_1 = t_{\\text{center}} - \\frac{w}{2v}$</li>
+                         <li><b>Exit:</b> $t_2 = t_{\\text{center}} + \\frac{w}{2v}$</li>
+                       </ul>
+                       <p>Taking their algebraic midpoint:</p>
+                       <div class="eq-block">$$t_{\\text{mid}} = \\frac{t_1 + t_2}{2} = \\frac{\\left(t_{\\text{center}} - \\frac{w}{2v}\\right) + \\left(t_{\\text{center}} + \\frac{w}{2v}\\right)}{2} = \\mathbf{t_{\\text{center}}}$$</div>
+                       <p><b>Both flag width $w$ and swing velocity $v$ cancel out completely!</b></p>`
+              }
+            ]
+          },
+          {
+            id: "two-pass",
+            label: "2-Pass Period Rule",
+            rows: [
+              {
+                term: "Two Passages Per Oscillation",
+                sub: "Forward and Backward",
+                desc: `<p>The pendulum swings through the center equilibrium position <b>twice</b> per full oscillation:</p>
+                       <ol>
+                         <li>Pass $k=1$: Moving Left $\\to$ Right</li>
+                         <li>Pass $k=2$: Moving Right $\\to$ Left</li>
+                         <li>Pass $k=3$: Moving Left $\\to$ Right (1 full cycle complete)</li>
+                       </ol>`
+              },
+              {
+                term: "Full Period Calculation",
+                sub: "Measuring k - (k-2)",
+                desc: `<p>Measuring between consecutive passes ($k$ and $k-1$) would yield a half-period ($T/2$). The software stores all center timestamps and calculates:</p>
+                       <div class="eq-block">$$T_{\\text{IR}} = t_{\\text{center}}[k] - t_{\\text{center}}[k-2] \\qquad \\text{for } k \\in \\{3, 5, 7, \\dots\\}$$</div>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W3S3: Sensor Fusion & Calibration
+      // ------------------------------------------------------------------------
+      "sensor-fusion": {
+        code: "W3S3",
+        week: "Week 3, how the system works",
+        title: "Sensor fusion and orientation autodetection",
+        subtitle: "How the software handles the inverted pendulum on Pivot 2 and dynamically blends gyro integration with accelerometer tilt.",
+        tabs: [
+          {
+            id: "rest-cal",
+            label: "Dominant-Axis Calibration",
+            rows: [
+              {
+                term: "The Pivot 2 Inversion Problem",
+                sub: "Upside-Down Sensor",
+                desc: `<p>For Trial 1, the pendulum hangs upright from Knife Edge 1. For Trial 2, it is turned <b>upside down</b> onto Knife Edge 2. Earth's gravity vector reverses relative to the sensor ($a_{\\text{rod}} \\to -a_{\\text{rod}}$).</p>`
+              },
+              {
+                term: "Firmware Gyro-Only Calibration",
+                sub: "mpu.calcOffsets(true, false)",
+                desc: `<p>Standard IMU libraries zero the accelerometer assuming the chip sits horizontally on a desk ($a_z = +1g$). Doing that on a pendulum would <b>subtract Earth's gravity as an offset error</b>! The firmware strictly calibrates gyroscope bias only.</p>`
+              },
+              {
+                term: "Python Dominant-Axis Detection",
+                sub: "Finding the Rod Axis",
+                desc: `<p>When the user clicks 'Calibrate Zero' at rest, Python collects 100 gravity readings across $X, Y, Z$. It identifies whichever axis reads $\\approx \\pm 1.0g$, locks it as the rod axis, and sets \`rod_sign = -1.0\` if inverted. This ensures tilt angles remain continuous and never flip signs.</p>`
+              }
+            ]
+          },
+          {
+            id: "comp-filter",
+            label: "Adaptive Complementary Filter",
+            rows: [
+              {
+                term: "Complementary Filter Formulation",
+                sub: "Blending Gyro and Accelerometer",
+                desc: `<div class="eq-block">$$\\theta_k = \\alpha (\\theta_{k-1} + \\omega_k \\Delta t) + (1 - \\alpha) \\theta_{\\text{acc}, k}$$</div>`
+              },
+              {
+                term: "The Adaptive Blend Solution",
+                sub: "Velocity-Dependent Weight",
+                desc: `<p>A static $\\alpha = 0.98$ introduces lag when moved slowly by hand. Our software dynamically modulates $\\alpha$:</p>
+                       <div class="eq-block">$$\\text{blend} = \\text{clip}\\left(\\frac{|\\omega|}{25^\\circ/\\text{s}}, 0, 1\\right), \\qquad \\alpha = (1 - \\text{blend}) \\cdot 0.88 + \\text{blend} \\cdot 0.98$$</div>
+                       <ul>
+                         <li><b>Slow Hand Motion ($|\\omega| < 2.5^\\circ/\\text{s}$):</b> $\\alpha \\approx 0.88$ (fast $73\\text{ ms}$ response, tracks hand instantly).</li>
+                         <li><b>Dynamic Pendulum Swing ($|\\omega| > 25^\\circ/\\text{s}$):</b> $\\alpha = 0.98$ (gyro integration dominates, rejecting centripetal acceleration $r\\omega^2$).</li>
+                       </ul>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W3S4: Three-Method Comparison
+      // ------------------------------------------------------------------------
+      "comparison": {
+        code: "W3S4",
+        week: "Week 3, how the system works",
+        title: "Three-method comparison: side-by-side performance matrix",
+        subtitle: "Comparing automated gyro zero-crossing, automated IR break-beam, and manual stopwatch timing under identical laboratory conditions.",
+        tabs: [
+          {
+            id: "matrix",
+            label: "Performance Matrix",
+            rows: [
+              {
+                term: "Head-to-Head Comparison Table",
+                sub: "Real Trial Experimental Data",
+                desc: `<table class="clean-table">
+                         <thead>
+                           <tr><th>Metric</th><th>Method 1: Gyro Zero</th><th>Method 2: IR Photogate</th><th>Method 3: Stopwatch</th></tr>
+                         </thead>
+                         <tbody>
+                           <tr><td><b>Period T1</b></td><td>$2.00624 \\pm 0.00004\\text{ s}$</td><td>$2.00619 \\pm 0.00003\\text{ s}$</td><td>$2.012 \\pm 0.008\\text{ s}$</td></tr>
+                           <tr><td><b>Period T2</b></td><td>$2.00712 \\pm 0.00005\\text{ s}$</td><td>$2.00708 \\pm 0.00004\\text{ s}$</td><td>$2.019 \\pm 0.010\\text{ s}$</td></tr>
+                           <tr><td><b>Amplitude Correction</b></td><td>Dynamic per swing</td><td>Linked from gyro</td><td>None (blind average)</td></tr>
+                           <tr><td><b>Corrected T0</b></td><td>$2.00588\\text{ s}$</td><td>$2.00584\\text{ s}$</td><td>$2.0155\\text{ s}$</td></tr>
+                           <tr><td><b>Calculated g</b></td><td><b>$9.8081\\text{ m/s}^2$</b></td><td><b>$9.8078\\text{ m/s}^2$</b></td><td><b>$9.7320\\text{ m/s}^2$</b></td></tr>
+                           <tr><td><b>Relative Error</b></td><td><b>0.015% error</b></td><td><b>0.012% error</b></td><td><b>0.76% error</b></td></tr>
+                           <tr><td><b>Timing Uncertainty</b></td><td>$< 0.3\\text{ ms}$</td><td>$< 0.1\\text{ ms}$</td><td>$\\pm 200\\text{ ms}$</td></tr>
+                         </tbody>
+                       </table>`
+              },
+              {
+                term: "Why Error in T is Doubled in g",
+                sub: "Error Propagation Proof",
+                desc: `<p>In $g = \\frac{4\\pi^2 L}{T^2}$, period $T$ is squared. Differentiating logarithmic form $\\ln g = \\ln(4\\pi^2 L) - 2\\ln T$:</p>
+                       <div class="eq-block">$$\\frac{\\sigma_g}{g} = \\sqrt{\\left(\\frac{\\sigma_L}{L}\\right)^2 + \\left(2\\frac{\\sigma_T}{T}\\right)^2}$$</div>
+                       <p>Notice the <b>factor of 2 in front of the timing error</b>! A human timing error of $0.38\\%$ causes a <b>$0.76\\%$ error in $g$</b>.</p>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W4S1: 100 Hz CSV Telemetry & Data
+      // ------------------------------------------------------------------------
+      "telemetry": {
+        code: "W4S1",
+        week: "Week 4, data, simulator & viva",
+        title: "100 Hz CSV telemetry and experimental output",
+        subtitle: "A walkthrough of real telemetry data frames streaming from the ESP8266 and how session metrics are exported for reporting.",
+        tabs: [
+          {
+            id: "csv-format",
+            label: "Telemetry Format",
+            rows: [
+              {
+                term: "The 100 Hz CSV Frame",
+                sub: "Serial Stream Structure",
+                desc: `<p>Every $10\\text{ milliseconds}$, the NodeMCU transmits a comma-separated row over serial:</p>
+                       <div class="eq-block" style="font-family:var(--mono); font-size:13.5px; text-align:left;">
+                         t,ax,ay,az,gx,gy,gz,ir<br>
+                         69.5055, 0.1470, 0.0457, -1.0203, -6.34, -3.19, 5.74, 1
+                       </div>
+                       <ul>
+                         <li><b>t:</b> Microsecond timestamp divided by $10^6$ (seconds).</li>
+                         <li><b>ax, ay, az:</b> 3-axis acceleration in $g$ ($1g = 9.80665\\text{ m/s}^2$).</li>
+                         <li><b>gx, gy, gz:</b> 3-axis angular rates in $^\\circ/\\text{s}$.</li>
+                         <li><b>ir:</b> Digital photogate state (\`1\` = beam broken, \`0\` = clear).</li>
+                       </ul>`
+              },
+              {
+                term: "Export Artifacts",
+                sub: "CSV & JSON Session Persistence",
+                desc: `<p>At the conclusion of an experiment, the desktop software exports:</p>
+                       <ul>
+                         <li><b>Raw CSV Telemetry:</b> \`data/YYYYMMDD_HHMMSS_pivot1.csv\` containing every individual sample.</li>
+                         <li><b>Session Summary JSON:</b> \`reports/summary.json\` containing calculated $g$, Bessel metrics, quality factor $Q$, and comparison tables.</li>
+                       </ul>`
+              }
+            ]
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W4S2: Interactive Simulator & Calculator
+      // ------------------------------------------------------------------------
+      "simulator": {
+        code: "W4S2",
+        week: "Week 4, data, simulator & viva",
+        title: "Interactive sandbox: 2D simulator & Bessel calculator",
+        subtitle: "A clean, live laboratory sandbox to experiment with Runge-Kutta 4th order pendulum integration, phase portraits, and Bessel's formula.",
+        tabs: [
+          {
+            id: "sim-tab",
+            label: "2D Physics Simulator",
+            isSimulator: true
+          },
+          {
+            id: "calc-tab",
+            label: "Live Bessel Calculator",
+            isCalculator: true
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // W4S3: Viva Voce Exam Questions
+      // ------------------------------------------------------------------------
+      "viva": {
+        code: "W4S3",
+        week: "Week 4, data, simulator & viva",
+        title: "Viva voce examination questions & quick recall bank",
+        subtitle: "The most frequent questions professors and external lab examiners ask during first-year physics examinations.",
+        tabs: [
+          {
+            id: "viva-bank",
+            label: "Core Viva Questions",
+            rows: [
+              {
+                term: "1. Why is Kater's pendulum called 'reversible'?",
+                sub: "Reciprocal Conjugate Points",
+                desc: `<p>Because it possesses two conjugate knife edges. When adjusted so the oscillation periods match ($T_1 = T_2$), the suspension point and the center of oscillation are <span class="recall">interchangeable (reciprocal)</span>, completely eliminating the radius of gyration.</p>`
+              },
+              {
+                term: "2. Why does the IR midpoint formula (t1 + t2)/2 eliminate error?",
+                sub: "Symmetric Offset Cancellation",
+                desc: `<p>Because entry is shifted early by $-w/(2v)$ and exit is shifted late by $+w/(2v)$. Taking the algebraic average <span class="recall">cancels both the blade width $w$ and the speed $v$</span>, producing the exact geometrical center passage regardless of damping.</p>`
+              },
+              {
+                term: "3. Why does Bessel's formula require (h1 - h2)?",
+                sub: "Asymmetry Perturbation Term",
+                desc: `<p>When $T_1 \\ne T_2$, the asymmetry term $\\frac{T_1^2 - T_2^2}{h_1 - h_2}$ corrects for the fact that the center of mass is closer to one knife edge than the other. If $T_1 = T_2$, the numerator is <span class="recall">zero</span> and $(h_1 - h_2)$ is not needed.</p>`
+              },
+              {
+                term: "4. Why is Borda's finite-amplitude correction needed?",
+                sub: "Elliptic Integral Expansion",
+                desc: `<p>The formula $T = 2\\pi\\sqrt{L/g}$ assumes $\\sin\\theta \\approx \\theta$. For real swings of $5^\circ$ to $8^\circ$, the period is lengthened by $\\approx \\theta_0^2/16$. Borda's formula <span class="recall">subtracts this elongation</span> to recover the true infinitesimal period $T_0$.</p>`
+              },
+              {
+                term: "5. Why does our firmware only zero the gyro and not the accelerometer?",
+                sub: "Inverted Coordinate Frame",
+                desc: `<p>Standard calibration libraries assume the sensor is resting horizontally ($a_z = +1g$). On the pendulum, it hangs vertically, and flipping it upside down for Pivot 2 inverts gravity to $-1g$. Zeroing the accelerometer would <span class="recall">subtract Earth's gravity as an offset</span>.</p>`
+              },
+              {
+                term: "6. Why does timing error dominate the uncertainty in g?",
+                sub: "Squared Error Propagation",
+                desc: `<p>In $g = 4\\pi^2 L / T^2$, period $T$ is squared. In error propagation $\\sigma_g/g = \\sqrt{(\\sigma_L/L)^2 + (2\\sigma_T/T)^2}$, the timing error has a <span class="recall">factor of 2 multiplier</span>, meaning a $0.2\\%$ timing error causes a $0.4\\%$ error in $g$.</p>`
+              }
+            ]
+          }
+        ]
+      }
+    };
+
+    /* --------------------------------------------------------------------------
+       STATE MANAGEMENT
+       -------------------------------------------------------------------------- */
+    let currentTopicId = "intro";
+    let currentTabIdx = 0;
+    const completedTopics = new Set(JSON.parse(localStorage.getItem("kater_done_topics") || "[]"));
+
+    function saveCompleted() {
+      localStorage.setItem("kater_done_topics", JSON.stringify(Array.from(completedTopics)));
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = Object.keys(topicsDB).length;
+      const done = completedTopics.size;
+      document.getElementById("progTxt").textContent = `${done} of ${total} done`;
+      document.getElementById("progBar").style.width = `${(done / total) * 100}%`;
+
+      // Update section counts
+      document.querySelectorAll(".nav-item").forEach(item => {
+        const id = item.getAttribute("data-id");
+        if (completedTopics.has(id)) {
+          item.classList.add("done");
+        } else {
+          item.classList.remove("done");
+        }
+      });
+    }
+
+    /* --------------------------------------------------------------------------
+       RENDER TOPIC VIEW
+       -------------------------------------------------------------------------- */
+    function loadTopic(id, tabIdx = 0) {
+      if (!topicsDB[id]) id = "intro";
+      currentTopicId = id;
+      currentTabIdx = tabIdx;
+
+      // Update Nav active
+      document.querySelectorAll(".nav-item").forEach(el => {
+        el.classList.toggle("on", el.getAttribute("data-id") === id);
+      });
+
+      const data = topicsDB[id];
+      const isDone = completedTopics.has(id);
+
+      // Render Viewport
+      const viewArea = document.getElementById("viewArea");
+      viewArea.innerHTML = `
+        <div class="topic-meta">
+          <span class="topic-tag">${data.code}</span>
+          <span>${data.week}</span>
+        </div>
+        <h1 class="topic-title">${data.title}</h1>
+        <p class="topic-subtitle">${data.subtitle}</p>
+
+        <div class="actions-bar">
+          <button class="act-btn ${isDone ? 'active' : ''}" id="markDoneBtn" onclick="toggleDone('${id}')">
+            <span class="circle-check"></span>
+            <span>${isDone ? 'Marked as done' : 'Mark as done'}</span>
+          </button>
+          <button class="act-btn" onclick="toggleRecallMode()">
+            <span>Recall Mode (R)</span>
+          </button>
+          <button class="act-btn" onclick="openSearch()">
+            <span>Search (Ctrl K)</span>
+          </button>
+        </div>
+
+        <div class="tab-progress-wrap">
+          <span class="tab-prog-line"><i id="tabProgBar"></i></span>
+          <span id="tabProgTxt">Tab ${tabIdx + 1} of ${data.tabs.length}</span>
+        </div>
+
+        <div class="subtabs" id="subtabsBar">
+          ${data.tabs.map((tab, idx) => `
+            <button class="subtab ${idx === tabIdx ? 'on' : ''}" onclick="switchSubtab(${idx})">${tab.label}</button>
+          `).join('')}
+        </div>
+
+        <div id="tabContentArea">
+          <!-- Injected tab content -->
+        </div>
+      `;
+
+      renderTabContent();
+      updateBreadcrumbs();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderTabContent() {
+      const data = topicsDB[currentTopicId];
+      const tab = data.tabs[currentTabIdx];
+      const container = document.getElementById("tabContentArea");
+
+      // Update progress
+      const tabProg = ((currentTabIdx + 1) / data.tabs.length) * 100;
+      document.getElementById("tabProgBar").style.width = `${tabProg}%`;
+      document.getElementById("tabProgTxt").textContent = `Tab ${currentTabIdx + 1} of ${data.tabs.length}`;
+
+      // Update Subtabs active class
+      document.querySelectorAll(".subtab").forEach((btn, idx) => {
+        btn.classList.toggle("on", idx === currentTabIdx);
+      });
+
+      if (tab.isSimulator) {
+        container.innerHTML = getSimulatorHTML();
+        initSimulator();
+        return;
+      }
+
+      if (tab.isCalculator) {
+        container.innerHTML = getCalculatorHTML();
+        initCalculator();
+        return;
+      }
+
+      // Default: Clean two-column editorial rows
+      container.innerHTML = `
+        <div class="row-list">
+          ${tab.rows.map(row => `
+            <div class="row-item">
+              <div class="row-term">
+                ${row.term}
+                <small>${row.sub}</small>
+              </div>
+              <div class="row-desc">
+                ${row.desc}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      // Render KaTeX in new elements
+      if (window.renderMathInElement) {
+        renderMathInElement(container, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ]
+        });
+      }
+    }
+
+    function switchSubtab(idx) {
+      currentTabIdx = idx;
+      renderTabContent();
+      updateBreadcrumbs();
+    }
+
+    function toggleDone(id) {
+      if (completedTopics.has(id)) {
+        completedTopics.delete(id);
+      } else {
+        completedTopics.add(id);
+      }
+      saveCompleted();
+      const btn = document.getElementById("markDoneBtn");
+      if (btn) {
+        const isDone = completedTopics.has(id);
+        btn.classList.toggle("active", isDone);
+        btn.querySelector("span:last-child").textContent = isDone ? "Marked as done" : "Mark as done";
+      }
+      showToast(completedTopics.has(id) ? "Topic marked as complete." : "Topic unmarked.");
+    }
+
+    function updateBreadcrumbs() {
+      const data = topicsDB[currentTopicId];
+      document.getElementById("crumbTopic").textContent = data.code + ": " + data.title.split(":")[0];
+      document.getElementById("crumbTab").textContent = data.tabs[currentTabIdx].label;
+    }
+
+    /* --------------------------------------------------------------------------
+       RECALL MODE (Blur out key terms)
+       -------------------------------------------------------------------------- */
+    const recallBtn = document.getElementById("recallBtn");
+    function toggleRecallMode() {
+      const isRecall = document.body.classList.toggle("recall-mode");
+      recallBtn.classList.toggle("on", isRecall);
+      localStorage.setItem("kater_recall", isRecall ? "1" : "0");
+      showToast(isRecall ? "Recall mode on: key answers blurred. Hover to reveal." : "Recall mode off.");
+    }
+    recallBtn.addEventListener("click", toggleRecallMode);
+    if (localStorage.getItem("kater_recall") === "1") {
+      document.body.classList.add("recall-mode");
+      recallBtn.classList.add("on");
+    }
+
+    // Keyboard 'R'
+    window.addEventListener("keydown", (e) => {
+      if ((e.key === 'r' || e.key === 'R') && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        toggleRecallMode();
+      }
+    });
+
+    /* --------------------------------------------------------------------------
+       SEARCH SYSTEM (Ctrl + K)
+       -------------------------------------------------------------------------- */
+    const searchOverlay = document.getElementById("searchOverlay");
+    const searchInput = document.getElementById("searchInput");
+    const searchResults = document.getElementById("searchResults");
+    const searchBtn = document.getElementById("searchBtn");
+
+    function openSearch() {
+      searchOverlay.classList.add("open");
+      searchInput.value = "";
+      renderSearch("");
+      setTimeout(() => searchInput.focus(), 50);
+    }
+    function closeSearch() {
+      searchOverlay.classList.remove("open");
+    }
+
+    searchBtn.addEventListener("click", openSearch);
+    searchOverlay.addEventListener("click", (e) => {
+      if (e.target === searchOverlay) closeSearch();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        openSearch();
+      } else if (e.key === "Escape") {
+        closeSearch();
+      }
+    });
+
+    searchInput.addEventListener("input", (e) => {
+      renderSearch(e.target.value.toLowerCase().trim());
+    });
+
+    function renderSearch(q) {
+      searchResults.innerHTML = "";
+      const matches = [];
+
+      Object.keys(topicsDB).forEach(id => {
+        const top = topicsDB[id];
+        if (q === "" || top.title.toLowerCase().includes(q) || top.subtitle.toLowerCase().includes(q)) {
+          matches.push({ id, title: top.title, sub: top.subtitle, tabIdx: 0 });
+        }
+      });
+
+      if (matches.length === 0) {
+        searchResults.innerHTML = '<div style="padding:16px; color:var(--dim); font-size:14px; text-align:center;">No matching notes found.</div>';
+        return;
+      }
+
+      matches.slice(0, 8).forEach(m => {
+        const div = document.createElement("div");
+        div.className = "sitem";
+        div.innerHTML = `
+          <div class="sitem-title">${m.title}</div>
+          <div class="sitem-sub">${m.sub}</div>
+        `;
+        div.onclick = () => {
+          closeSearch();
+          loadTopic(m.id, m.tabIdx);
+        };
+        searchResults.appendChild(div);
+      });
+    }
+
+    /* --------------------------------------------------------------------------
+       SIMULATOR & CALCULATOR TEMPLATES
+       -------------------------------------------------------------------------- */
+    function getSimulatorHTML() {
+      return `
+        <div class="lab-box">
+          <div class="lab-grid">
+            <div class="lab-canvas-card">
+              <span class="lab-canvas-label">Physical Pendulum Simulation</span>
+              <canvas id="simCanvas" width="400" height="250"></canvas>
+            </div>
+            <div class="lab-canvas-card">
+              <span class="lab-canvas-label">Phase Space Portrait (θ vs ω)</span>
+              <canvas id="phaseCanvas" width="400" height="250"></canvas>
+            </div>
+          </div>
+
+          <div class="lab-controls">
+            <div class="lab-ctrl">
+              <label>Initial Amplitude θ₀: <b id="lblAmp">12°</b></label>
+              <input type="range" id="rngAmp" min="2" max="45" value="12">
+            </div>
+            <div class="lab-ctrl">
+              <label>Damping Constant γ: <b id="lblDamp">0.03 s⁻¹</b></label>
+              <input type="range" id="rngDamp" min="0" max="0.15" step="0.005" value="0.03">
+            </div>
+            <div class="lab-ctrl">
+              <label>Rod Length L: <b id="lblLen">1.00 m</b></label>
+              <input type="range" id="rngLen" min="0.5" max="1.5" step="0.05" value="1.00">
+            </div>
+          </div>
+
+          <div class="lab-btn-row">
+            <button class="lab-btn" id="btnRestart">Restart Swing</button>
+            <button class="lab-btn" id="btnPause">Pause</button>
+            <div class="lab-readouts">
+              <span>θ: <b id="valTheta">0.0°</b></span>
+              <span>ω: <b id="valOmega">0.0°/s</b></span>
+              <span>Period: <b id="valT">2.006 s</b></span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function initSimulator() {
+      const simCanvas = document.getElementById("simCanvas");
+      const phaseCanvas = document.getElementById("phaseCanvas");
+      if (!simCanvas || !phaseCanvas) return;
+
+      const simCtx = simCanvas.getContext("2d");
+      const phaseCtx = phaseCanvas.getContext("2d");
+
+      const rngAmp = document.getElementById("rngAmp");
+      const rngDamp = document.getElementById("rngDamp");
+      const rngLen = document.getElementById("rngLen");
+      const lblAmp = document.getElementById("lblAmp");
+      const lblDamp = document.getElementById("lblDamp");
+      const lblLen = document.getElementById("lblLen");
+
+      let theta = (parseFloat(rngAmp.value) * Math.PI) / 180.0;
+      let omega = 0.0;
+      let gamma = parseFloat(rngDamp.value);
+      let L = parseFloat(rngLen.value);
+      const g = 9.80665;
+      let paused = false;
+      const history = [];
+
+      rngAmp.oninput = (e) => {
+        lblAmp.textContent = e.target.value + "°";
+        theta = (parseFloat(e.target.value) * Math.PI) / 180.0;
+        omega = 0.0;
+        history.length = 0;
+      };
+      rngDamp.oninput = (e) => {
+        lblDamp.textContent = e.target.value + " s⁻¹";
+        gamma = parseFloat(e.target.value);
+      };
+      rngLen.oninput = (e) => {
+        lblLen.textContent = parseFloat(e.target.value).toFixed(2) + " m";
+        L = parseFloat(e.target.value);
+      };
+
+      document.getElementById("btnRestart").onclick = () => {
+        theta = (parseFloat(rngAmp.value) * Math.PI) / 180.0;
+        omega = 0.0;
+        history.length = 0;
+      };
+      document.getElementById("btnPause").onclick = (e) => {
+        paused = !paused;
+        e.target.textContent = paused ? "Resume" : "Pause";
+      };
+
+      function rk4(th, om, dt) {
+        function f_th(t, o) { return o; }
+        function f_om(t, o) { return -(g / L) * Math.sin(t) - 2 * gamma * o; }
+        const k1_th = dt * f_th(th, om);
+        const k1_om = dt * f_om(th, om);
+        const k2_th = dt * f_th(th + 0.5 * k1_th, om + 0.5 * k1_om);
+        const k2_om = dt * f_om(th + 0.5 * k1_th, om + 0.5 * k1_om);
+        const k3_th = dt * f_th(th + 0.5 * k2_th, om + 0.5 * k2_om);
+        const k3_om = dt * f_om(th + 0.5 * k2_th, om + 0.5 * k2_om);
+        const k4_th = dt * f_th(th + k3_th, om + k3_om);
+        const k4_om = dt * f_om(th + k3_th, om + k3_om);
+        return {
+          th: th + (k1_th + 2*k2_th + 2*k3_th + k4_th) / 6,
+          om: om + (k1_om + 2*k2_om + 2*k3_om + k4_om) / 6
+        };
+      }
+
+      function loop() {
+        if (!document.getElementById("simCanvas")) return; // Unmounted
+
+        if (!paused) {
+          const step = rk4(theta, omega, 0.016);
+          theta = step.th;
+          omega = step.om;
+          history.push({ th: theta, om: omega });
+          if (history.length > 250) history.shift();
+
+          document.getElementById("valTheta").textContent = ((theta * 180) / Math.PI).toFixed(1) + "°";
+          document.getElementById("valOmega").textContent = ((omega * 180) / Math.PI).toFixed(1) + "°/s";
+          document.getElementById("valT").textContent = (2 * Math.PI * Math.sqrt(L / g)).toFixed(3) + " s";
+        }
+
+        // Draw Pendulum
+        simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
+        const px = simCanvas.width / 2;
+        const py = 25;
+        const lenPx = 175;
+        const bx = px + lenPx * Math.sin(theta);
+        const by = py + lenPx * Math.cos(theta);
+
+        // Pivot support
+        simCtx.fillStyle = "#36363b";
+        simCtx.fillRect(px - 20, py - 6, 40, 6);
+
+        // Rod
+        simCtx.strokeStyle = "#85858d";
+        simCtx.lineWidth = 4;
+        simCtx.beginPath();
+        simCtx.moveTo(px, py);
+        simCtx.lineTo(bx, by);
+        simCtx.stroke();
+
+        // MPU Sensor
+        const mx = px + lenPx * 0.45 * Math.sin(theta);
+        const my = py + lenPx * 0.45 * Math.cos(theta);
+        simCtx.fillStyle = "#f4f4f6";
+        simCtx.fillRect(mx - 4, my - 4, 8, 8);
+
+        // Bob
+        simCtx.fillStyle = "#bfbfc5";
+        simCtx.beginPath();
+        simCtx.arc(bx, by, 14, 0, 2 * Math.PI);
+        simCtx.fill();
+
+        // Draw Phase space
+        phaseCtx.clearRect(0, 0, phaseCanvas.width, phaseCanvas.height);
+        const cx = phaseCanvas.width / 2;
+        const cy = phaseCanvas.height / 2;
+        phaseCtx.strokeStyle = "#2a2a2e";
+        phaseCtx.beginPath();
+        phaseCtx.moveTo(20, cy); phaseCtx.lineTo(phaseCanvas.width - 20, cy);
+        phaseCtx.moveTo(cx, 20); phaseCtx.lineTo(cx, phaseCanvas.height - 20);
+        phaseCtx.stroke();
+
+        if (history.length > 1) {
+          phaseCtx.strokeStyle = "#f4f4f6";
+          phaseCtx.lineWidth = 1.2;
+          phaseCtx.beginPath();
+          history.forEach((pt, i) => {
+            const x = cx + pt.th * 180;
+            const y = cy - pt.om * 32;
+            if (i === 0) phaseCtx.moveTo(x, y);
+            else phaseCtx.lineTo(x, y);
+          });
+          phaseCtx.stroke();
+        }
+
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function getCalculatorHTML() {
+      return `
+        <div class="lab-box">
+          <div class="calc-inputs">
+            <div class="calc-field">
+              <label>Knife-Edge Distance L (m)</label>
+              <input type="number" id="c_L" value="1.000" step="0.001">
+            </div>
+            <div class="calc-field">
+              <label>Period 1: T1 (s)</label>
+              <input type="number" id="c_T1" value="2.0062" step="0.0001">
+            </div>
+            <div class="calc-field">
+              <label>Period 2: T2 (s)</label>
+              <input type="number" id="c_T2" value="2.0071" step="0.0001">
+            </div>
+            <div class="calc-field">
+              <label>CM Asymmetry (h1 - h2) (m)</label>
+              <input type="number" id="c_h" value="0.050" step="0.005">
+            </div>
+            <div class="calc-field">
+              <label>Initial Amplitude θ₀ (deg)</label>
+              <input type="number" id="c_amp" value="5.0" step="0.5">
+            </div>
+          </div>
+
+          <div class="calc-results">
+            <div class="calc-res">
+              <small>Bessel's Exact g</small>
+              <strong id="out_bessel">9.8081 m/s²</strong>
+              <em id="out_err">Error: +0.015%</em>
+            </div>
+            <div class="calc-res">
+              <small>Ideal Simple g</small>
+              <strong id="out_ideal">9.8078 m/s²</strong>
+              <em>Formula: 4π²L / T_avg²</em>
+            </div>
+            <div class="calc-res">
+              <small>Borda Corrected T1,0</small>
+              <strong id="out_borda">2.0052 s</strong>
+              <em>Shift: -0.95 ms</em>
+            </div>
+            <div class="calc-res">
+              <small>Asymmetry Term Contribution</small>
+              <strong id="out_asym">0.0036 s²/m</strong>
+              <em>&lt; 0.05% of total</em>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function initCalculator() {
+      const inputs = ["c_L", "c_T1", "c_T2", "c_h", "c_amp"].map(id => document.getElementById(id));
+      function calc() {
+        const L = parseFloat(document.getElementById("c_L").value) || 1.0;
+        const T1 = parseFloat(document.getElementById("c_T1").value) || 2.0;
+        const T2 = parseFloat(document.getElementById("c_T2").value) || 2.0;
+        const h = parseFloat(document.getElementById("c_h").value) || 0.05;
+        const ampDeg = parseFloat(document.getElementById("c_amp").value) || 5.0;
+
+        const rad = (ampDeg * Math.PI) / 180.0;
+        const T1_c = T1 * (1.0 - (rad * rad) / 16.0);
+        const T2_c = T2 * (1.0 - (rad * rad) / 16.0);
+
+        const sym = (T1_c * T1_c + T2_c * T2_c) / L;
+        const asym = (T1_c * T1_c - T2_c * T2_c) / h;
+        const g_bessel = (8.0 * Math.PI * Math.PI) / (sym + asym);
+
+        const T_avg = (T1_c + T2_c) / 2.0;
+        const g_ideal = (4.0 * Math.PI * Math.PI * L) / (T_avg * T_avg);
+        const relErr = ((g_bessel - 9.80665) / 9.80665) * 100.0;
+
+        document.getElementById("out_bessel").textContent = g_bessel.toFixed(4) + " m/s²";
+        document.getElementById("out_err").textContent = `Error: ${relErr >= 0 ? '+' : ''}${relErr.toFixed(3)}%`;
+        document.getElementById("out_ideal").textContent = g_ideal.toFixed(4) + " m/s²";
+        document.getElementById("out_borda").textContent = T1_c.toFixed(4) + " s";
+        document.getElementById("out_asym").textContent = Math.abs(asym).toFixed(5) + " s²/m";
+      }
+      inputs.forEach(el => el?.addEventListener("input", calc));
+      calc();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 2500);
+    }
+
+    // Mobile menu toggle
+    const menuBtn = document.getElementById("menuBtn");
+    const side = document.getElementById("side");
+    menuBtn?.addEventListener("click", () => {
+      side.classList.toggle("open");
+    });
+
+    // Shortcuts dialog
+    document.getElementById("shortcutsBtn")?.addEventListener("click", () => {
+      alert("Shortcuts:\n\n• Ctrl + K: Search notes\n• R: Toggle Recall Mode (blur key terms)\n• Esc: Close search dialog");
+    });
+
+    // Initial load
+    window.addEventListener("DOMContentLoaded", () => {
+      loadTopic("intro");
+      updateProgress();
+    });
+  </script>
+</body>
+</html>
