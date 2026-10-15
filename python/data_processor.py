@@ -192,10 +192,15 @@ class DataProcessor:
         theta_acc = np.arctan2(self._filt_a_perp * rod_sign, self._filt_a_rod * rod_sign)
 
         # Complementary filter: high-pass gyro integration + low-pass accel tilt
-        # Adaptive alpha: 0.88 for slow/static tilt (instant response), scaling to comp_alpha (0.98) for fast swings
-        omega_deg_abs = abs(float(np.degrees(self._filt_omega)))
-        blend = float(np.clip(omega_deg_abs / 25.0, 0.0, 1.0))
-        alpha = (1.0 - blend) * 0.88 + blend * self.comp_alpha
+        # During recording, keep alpha at comp_alpha (0.98) to prevent turning-point tangential
+        # acceleration contamination (r*theta_ddot) from attenuating the measured peak amplitude.
+        # Only use the fast-settling 0.88 blend when not recording (e.g. idle/setup tilt tracking).
+        if self.recording:
+            alpha = self.comp_alpha
+        else:
+            omega_deg_abs = abs(float(np.degrees(self._filt_omega)))
+            blend = float(np.clip(omega_deg_abs / 25.0, 0.0, 1.0))
+            alpha = (1.0 - blend) * 0.88 + blend * self.comp_alpha
 
         self.current_angle_rad = (
             alpha * (self.current_angle_rad + self._filt_omega * dt)
