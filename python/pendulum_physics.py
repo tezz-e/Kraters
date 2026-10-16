@@ -23,19 +23,24 @@ def katers_g_bessel(T1: float, T2: float, L: float,
 def compute_g(T1: float, T2: float, L: float,
               h1_minus_h2: float = None,
               threshold: float = 0.001) -> Tuple[float, str]:
-    """Smart g calculation: uses ideal if T1 ~= T2, Bessel's otherwise.
+    """Smart g calculation: uses Bessel's formula when asymmetry is known,
+    ideal formula if periods are identical, or warns if asymmetry is missing.
     
     Returns (g_value, formula_used_string).
     """
     rel_diff = abs(T1 - T2) / ((T1 + T2) / 2.0)
 
-    if rel_diff < threshold or h1_minus_h2 is None or h1_minus_h2 == 0:
+    if h1_minus_h2 is not None and h1_minus_h2 != 0:
+        g = katers_g_bessel(T1, T2, L, h1_minus_h2)
+        return g, f"Bessel's formula (h1 - h2 = {h1_minus_h2:+.4f} m, rel diff = {rel_diff:.3%})"
+    elif rel_diff < threshold:
         T_avg = (T1 + T2) / 2.0
         g = katers_g_ideal(L, T_avg)
-        return g, f"Ideal (T1 ~= T2, rel diff = {rel_diff:.4%})"
+        return g, f"Ideal equal-period (T1 ≈ T2, rel diff = {rel_diff:.3%})"
     else:
-        g = katers_g_bessel(T1, T2, L, h1_minus_h2)
-        return g, f"Bessel's (rel diff = {rel_diff:.4%})"
+        T_avg = (T1 + T2) / 2.0
+        g = katers_g_ideal(L, T_avg)
+        return g, f"Ideal approximation (T1 != T2 by {rel_diff:.2%}, h1 - h2 not provided)"
 
 
 def amplitude_correction(T_measured: float, theta0_rad: float) -> float:

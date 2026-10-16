@@ -121,6 +121,12 @@ class MainWindow(QtWidgets.QMainWindow):
             page.cal_btn.setEnabled(True)
 
     def _go_to_trial1(self):
+        # Refresh parameters from setup page in case user edited them after connecting
+        params = self.setup_page.get_params()
+        self.experiment.L = params['L']
+        self.experiment.h1_minus_h2 = params['h1_minus_h2']
+        self.experiment.g_accepted = params['g_accepted']
+
         dominant = getattr(self.reader, 'dominant_axis', 'az') if self.reader else 'az'
         a_rest_val = self.reader.a_rest if (self.reader and self.reader.a_rest) else 1.0
         a_perp_val = getattr(self.reader, 'a_perp_rest', 0.0) if self.reader else 0.0

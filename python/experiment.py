@@ -134,6 +134,7 @@ class Experiment:
 
         results = {
             'L': self.L,
+            'h1_minus_h2': self.h1_minus_h2,
             'g_accepted': self.g_accepted,
             'trial1': self.trial1.__dict__,
             'trial2': self.trial2.__dict__,

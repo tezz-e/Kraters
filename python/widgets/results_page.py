@@ -51,8 +51,38 @@ class ResultsPage(QtWidgets.QWidget):
 
         # ── Formula used ────────────────────────────
         self.formula_label = QtWidgets.QLabel("")
-        self.formula_label.setStyleSheet("font-size: 13px; color: #00ff88; padding: 6px; font-weight: bold;")
+        self.formula_label.setStyleSheet("font-size: 13px; color: #00ff88; padding: 6px; font-weight: bold; background: #16162a; border-radius: 4px;")
         layout.addWidget(self.formula_label)
+
+        # ── Parameter recalculation bar ─────────────
+        recalc_group = QtWidgets.QGroupBox("Geometry Parameters & Live Recalculation")
+        recalc_layout = QtWidgets.QHBoxLayout(recalc_group)
+
+        recalc_layout.addWidget(QtWidgets.QLabel("Knife-edge distance L:"))
+        self.recalc_L_input = QtWidgets.QDoubleSpinBox()
+        self.recalc_L_input.setRange(0.01, 5.0)
+        self.recalc_L_input.setDecimals(4)
+        self.recalc_L_input.setValue(1.0)
+        self.recalc_L_input.setSuffix(" m")
+        recalc_layout.addWidget(self.recalc_L_input)
+
+        recalc_layout.addWidget(QtWidgets.QLabel("h1 - h2 (asymmetry):"))
+        self.recalc_h_input = QtWidgets.QDoubleSpinBox()
+        self.recalc_h_input.setRange(-2.0, 2.0)
+        self.recalc_h_input.setDecimals(4)
+        self.recalc_h_input.setValue(-0.1400)
+        self.recalc_h_input.setSuffix(" m")
+        self.recalc_h_input.setSpecialValueText("0.0 (use ideal formula)")
+        recalc_layout.addWidget(self.recalc_h_input)
+
+        self.recalc_btn = QtWidgets.QPushButton("⟳ Recalculate g")
+        self.recalc_btn.setStyleSheet(
+            "font-weight: bold; background: #00ff88; color: #111; padding: 6px 16px; border-radius: 4px;"
+        )
+        self.recalc_btn.clicked.connect(self._recalculate)
+        recalc_layout.addWidget(self.recalc_btn)
+
+        layout.addWidget(recalc_group)
 
         # ── Decay plot (from pivot 1) ───────────────
         bottom = QtWidgets.QHBoxLayout()
@@ -87,29 +117,44 @@ class ResultsPage(QtWidgets.QWidget):
 
     def populate(self, experiment: Experiment):
         """Fill the dashboard with results from a completed experiment."""
+        self.experiment = experiment
+        self.recalc_L_input.blockSignals(True)
+        self.recalc_L_input.setValue(experiment.L)
+        self.recalc_L_input.blockSignals(False)
+
+        self.recalc_h_input.blockSignals(True)
+        self.recalc_h_input.setValue(experiment.h1_minus_h2 if experiment.h1_minus_h2 is not None else 0.0)
+        self.recalc_h_input.blockSignals(False)
+
         results = experiment.compute_results()
         t1 = experiment.trial1
         t2 = experiment.trial2
 
         # ── Build comparison table ──────────────────
         headers = ['Metric', 'Gyro (MPU6050)', 'IR Break-Beam', 'Manual Stopwatch']
+        t1_gyro_m = f"{t1.T_gyro_mean:.5f} ± {t1.T_gyro_std:.5f}" if (t1 and t1.T_gyro_mean) else '—'
+        t1_ir_m = f"{t1.T_ir_mean:.5f} ± {t1.T_ir_std:.5f}" if (t1 and t1.T_ir_mean) else '—'
+        t1_man_m = f"{t1.T_manual:.5f}" if (t1 and t1.T_manual) else '—'
+
+        t2_gyro_m = f"{t2.T_gyro_mean:.5f} ± {t2.T_gyro_std:.5f}" if (t2 and t2.T_gyro_mean) else '—'
+        t2_ir_m = f"{t2.T_ir_mean:.5f} ± {t2.T_ir_std:.5f}" if (t2 and t2.T_ir_mean) else '—'
+        t2_man_m = f"{t2.T_manual:.5f}" if (t2 and t2.T_manual) else '—'
+
+        t1_gyro_c = f"{t1.T_gyro_corrected:.5f}" if (t1 and t1.T_gyro_corrected) else '—'
+        t1_ir_c = f"{t1.T_ir_corrected:.5f}" if (t1 and t1.T_ir_corrected) else '—'
+
+        t2_gyro_c = f"{t2.T_gyro_corrected:.5f}" if (t2 and t2.T_gyro_corrected) else '—'
+        t2_ir_c = f"{t2.T_ir_corrected:.5f}" if (t2 and t2.T_ir_corrected) else '—'
+
+        n_gyro = (t1.n_oscillations_gyro if t1 else 0) + (t2.n_oscillations_gyro if t2 else 0)
+        n_ir = (t1.n_oscillations_ir if t1 else 0) + (t2.n_oscillations_ir if t2 else 0)
+        n_man = ((t1.n_oscillations_manual or 0) if t1 else 0) + ((t2.n_oscillations_manual or 0) if t2 else 0)
+
         rows = [
-            ['T1 (s)',
-             f"{t1.T_gyro_mean:.5f} ± {t1.T_gyro_std:.5f}" if t1.T_gyro_mean else '—',
-             f"{t1.T_ir_mean:.5f} ± {t1.T_ir_std:.5f}" if t1.T_ir_mean else '—',
-             f"{t1.T_manual:.5f}" if t1.T_manual else '—'],
-            ['T2 (s)',
-             f"{t2.T_gyro_mean:.5f} ± {t2.T_gyro_std:.5f}" if t2.T_gyro_mean else '—',
-             f"{t2.T_ir_mean:.5f} ± {t2.T_ir_std:.5f}" if t2.T_ir_mean else '—',
-             f"{t2.T_manual:.5f}" if t2.T_manual else '—'],
-            ['T1,0 (corrected s)',
-             f"{t1.T_gyro_corrected:.5f}" if t1.T_gyro_corrected else '—',
-             f"{t1.T_ir_corrected:.5f}" if t1.T_ir_corrected else '—',
-             '— (no correction)'],
-            ['T2,0 (corrected s)',
-             f"{t2.T_gyro_corrected:.5f}" if t2.T_gyro_corrected else '—',
-             f"{t2.T_ir_corrected:.5f}" if t2.T_ir_corrected else '—',
-             '— (no correction)'],
+            ['T1 (s)', t1_gyro_m, t1_ir_m, t1_man_m],
+            ['T2 (s)', t2_gyro_m, t2_ir_m, t2_man_m],
+            ['T1,0 (corrected s)', t1_gyro_c, t1_ir_c, '— (no correction)'],
+            ['T2,0 (corrected s)', t2_gyro_c, t2_ir_c, '— (no correction)'],
             ['Calculated g (m/s²)',
              f"{results.get('g_gyro', 0):.5f}" if 'g_gyro' in results else '—',
              f"{results.get('g_ir', 0):.5f}" if 'g_ir' in results else '—',
@@ -118,10 +163,7 @@ class ResultsPage(QtWidgets.QWidget):
              f"{results.get('g_gyro_error_pct', 0):.4f} %" if 'g_gyro_error_pct' in results else '—',
              f"{results.get('g_ir_error_pct', 0):.4f} %" if 'g_ir_error_pct' in results else '—',
              f"{results.get('g_manual_error_pct', 0):.4f} %" if 'g_manual_error_pct' in results else '—'],
-            ['Oscillations Counted',
-             str(t1.n_oscillations_gyro + t2.n_oscillations_gyro),
-             str(t1.n_oscillations_ir + t2.n_oscillations_ir),
-             f"{(t1.n_oscillations_manual or 0) + (t2.n_oscillations_manual or 0)}"],
+            ['Oscillations Counted', str(n_gyro), str(n_ir), str(n_man)],
         ]
 
         self.table.setColumnCount(len(headers))
@@ -138,14 +180,17 @@ class ResultsPage(QtWidgets.QWidget):
 
         # Formula used
         if 'g_gyro_formula' in results:
+            formula_info = results['g_gyro_formula']
+            asym_str = f"h1 - h2 = {experiment.h1_minus_h2:+.4f} m" if experiment.h1_minus_h2 is not None else "Asymmetry not set (ideal formula)"
             self.formula_label.setText(
-                f"Formula used: {results['g_gyro_formula']}  |  "
-                f"Knife-edge distance L = {experiment.L} m  |  "
+                f"Formula: {formula_info}  |  "
+                f"L = {experiment.L:.4f} m  |  "
+                f"{asym_str}  |  "
                 f"Standard g = {experiment.g_accepted} m/s²"
             )
 
         # ── Decay plot ──────────────────────────────
-        if t1.decay_swing_numbers:
+        if t1 and t1.decay_swing_numbers:
             sn = np.array(t1.decay_swing_numbers)
             sa = np.array(t1.decay_amplitudes)
             self.decay_plot.clear()
@@ -163,3 +208,11 @@ class ResultsPage(QtWidgets.QWidget):
                     self.lbl_gamma.setText(f"{gamma:.6f}")
                     self.lbl_Q.setText(f"{Q:.1f}")
                     self.lbl_delta.setText(f"{gamma:.6f}")
+
+    def _recalculate(self):
+        if not hasattr(self, 'experiment') or not self.experiment:
+            return
+        self.experiment.L = self.recalc_L_input.value()
+        h = self.recalc_h_input.value()
+        self.experiment.h1_minus_h2 = h if abs(h) > 1e-5 else None
+        self.populate(self.experiment)

@@ -53,7 +53,7 @@ class SetupPage(QtWidgets.QWidget):
         layout.addWidget(self.preview_label)
 
         # ── Parameters group ────────────────────────
-        params_group = QtWidgets.QGroupBox("Experiment Parameters")
+        params_group = QtWidgets.QGroupBox("Experiment Geometry & Parameters")
         params_layout = QtWidgets.QFormLayout(params_group)
 
         self.L_input = QtWidgets.QDoubleSpinBox()
@@ -61,15 +61,37 @@ class SetupPage(QtWidgets.QWidget):
         self.L_input.setDecimals(4)
         self.L_input.setValue(1.0)
         self.L_input.setSuffix(" m")
+        self.L_input.valueChanged.connect(self._sync_h_from_inputs)
         params_layout.addRow("Knife-edge distance (L):", self.L_input)
+
+        self.h1_input = QtWidgets.QDoubleSpinBox()
+        self.h1_input.setRange(0.0, 5.0)
+        self.h1_input.setDecimals(4)
+        self.h1_input.setValue(0.4300)
+        self.h1_input.setSuffix(" m")
+        self.h1_input.valueChanged.connect(self._sync_h_from_inputs)
+        params_layout.addRow("h1 (Pivot 1 Knife Edge to Center of Mass):", self.h1_input)
+
+        self.h2_input = QtWidgets.QDoubleSpinBox()
+        self.h2_input.setRange(0.0, 5.0)
+        self.h2_input.setDecimals(4)
+        self.h2_input.setValue(0.5700)
+        self.h2_input.setSuffix(" m")
+        self.h2_input.valueChanged.connect(self._sync_h_from_inputs)
+        params_layout.addRow("h2 (Pivot 2 Knife Edge to Center of Mass):", self.h2_input)
 
         self.h_input = QtWidgets.QDoubleSpinBox()
         self.h_input.setRange(-2.0, 2.0)
         self.h_input.setDecimals(4)
-        self.h_input.setValue(0.0)
+        self.h_input.setValue(-0.1400)
         self.h_input.setSuffix(" m")
-        self.h_input.setSpecialValueText("Not measured (use ideal formula)")
-        params_layout.addRow("h1 - h2 (optional, for Bessel's formula):", self.h_input)
+        self.h_input.setSpecialValueText("0.0 (use ideal formula)")
+        self.h_input.valueChanged.connect(self._on_h_diff_changed)
+        params_layout.addRow("h1 - h2 (Bessel's asymmetry):", self.h_input)
+
+        self.lbl_h_check = QtWidgets.QLabel("✅ h1 + h2 = 1.0000 m (matches L). Bessel asymmetry = -0.1400 m")
+        self.lbl_h_check.setStyleSheet("color: #00ff88; font-size: 12px; font-weight: bold; padding: 2px;")
+        params_layout.addRow("", self.lbl_h_check)
 
         self.g_input = QtWidgets.QDoubleSpinBox()
         self.g_input.setRange(9.0, 10.0)
@@ -83,9 +105,9 @@ class SetupPage(QtWidgets.QWidget):
         # ── Instructions ────────────────────────────
         info = QtWidgets.QLabel(
             "Quick Instructions:\n"
-            "1. Connect the ESP via USB (CH340 driver on COM13)\n"
-            "2. Mount MPU6050 flat on the pendulum rod (Z-axis along rod toward pivot)\n"
-            "3. Enter the distance between knife edges (L in meters)\n"
+            "1. Connect the ESP via USB (CH340 driver on COM port)\n"
+            "2. Mount MPU6050 flat on pendulum rod (Z-axis along rod toward pivot)\n"
+            "3. Verify Knife-Edge distance L (1.000 m) & balance point (h1 ≈ 0.43m, h2 ≈ 0.57m)\n"
             "4. Click 'Connect' to initialize the serial data stream\n"
             "5. Click 'Next' to begin the Pivot 1 trial"
         )
@@ -129,6 +151,32 @@ class SetupPage(QtWidgets.QWidget):
             f"gx={sample['gx']:+.1f}°/s  gy={sample['gy']:+.1f}°/s  |  IR: {ir_text}"
         )
 
+    def _sync_h_from_inputs(self):
+        h1 = self.h1_input.value()
+        h2 = self.h2_input.value()
+        L = self.L_input.value()
+        h_diff = h1 - h2
+        self.h_input.blockSignals(True)
+        self.h_input.setValue(h_diff)
+        self.h_input.blockSignals(False)
+
+        h_sum = h1 + h2
+        if abs(h_sum - L) <= 0.01:
+            self.lbl_h_check.setText(f"✅ h1 + h2 = {h_sum:.4f} m (matches L = {L:.4f} m). Bessel asymmetry = {h_diff:+.4f} m")
+            self.lbl_h_check.setStyleSheet("color: #00ff88; font-size: 12px; font-weight: bold; padding: 2px;")
+        else:
+            self.lbl_h_check.setText(f"⚠️ Note: h1 + h2 ({h_sum:.3f} m) != L ({L:.3f} m). Measure from knife-edge blade apex, not rod ends!")
+            self.lbl_h_check.setStyleSheet("color: #ffaa00; font-size: 12px; font-weight: bold; padding: 2px;")
+
+    def _on_h_diff_changed(self):
+        h_diff = self.h_input.value()
+        if abs(h_diff) < 1e-5:
+            self.lbl_h_check.setText("ℹ️ h1 - h2 is 0.0; ideal equal-period formula will be used.")
+            self.lbl_h_check.setStyleSheet("color: #00d2ff; font-size: 12px; font-weight: bold; padding: 2px;")
+        else:
+            self.lbl_h_check.setText(f"ℹ️ Custom Bessel asymmetry h1 - h2 = {h_diff:+.4f} m")
+            self.lbl_h_check.setStyleSheet("color: #00d2ff; font-size: 12px; font-weight: bold; padding: 2px;")
+
     def get_port(self) -> str:
         return self.port_combo.currentData() or self.port_combo.currentText().split()[0]
 
@@ -136,6 +184,8 @@ class SetupPage(QtWidgets.QWidget):
         h = self.h_input.value()
         return {
             'L': self.L_input.value(),
-            'h1_minus_h2': h if h != 0 else None,
+            'h1': self.h1_input.value(),
+            'h2': self.h2_input.value(),
+            'h1_minus_h2': h if abs(h) > 1e-5 else None,
             'g_accepted': self.g_input.value(),
         }
