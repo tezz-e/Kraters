@@ -214,21 +214,35 @@ class MainWindow(QtWidgets.QMainWindow):
     def _export_json(self):
         results = self.experiment.compute_results()
         path = self.logger.save_session(results)
-        QtWidgets.QMessageBox.information(self, "Exported",
-                                          f"Results saved to:\n{path}")
+        folder = os.path.dirname(os.path.abspath(path))
+        if hasattr(os, 'startfile'):
+            try:
+                os.startfile(folder)
+            except Exception:
+                pass
+        QtWidgets.QMessageBox.information(
+            self, "Session Summary Exported",
+            f"Results saved to:\n{path}\n\nFolder opened in File Explorer:\n{folder}"
+        )
 
     def _export_csv(self):
         csv_files = getattr(self.logger, 'saved_csvs', [])
+        folder = os.path.abspath(self.logger.output_dir)
+        if hasattr(os, 'startfile'):
+            try:
+                os.startfile(folder)
+            except Exception:
+                pass
         if csv_files:
-            file_list = "\n".join(csv_files)
+            file_list = "\n".join([os.path.basename(f) for f in csv_files])
             QtWidgets.QMessageBox.information(
                 self, "Exported Raw CSV Data",
-                f"CSV data files recorded in this session:\n\n{file_list}"
+                f"CSV data files recorded in this session:\n\n{file_list}\n\nFolder opened in File Explorer:\n{folder}"
             )
         else:
             QtWidgets.QMessageBox.information(
                 self, "Export Raw CSV Data",
-                f"Data folder: {os.path.abspath(self.logger.output_dir)}\n(No CSV recorded yet in this session)"
+                f"Data folder:\n{folder}\n\n(No CSV recorded yet in this session)"
             )
 
     def _update(self):
