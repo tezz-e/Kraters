@@ -53,14 +53,10 @@ physicsproject/
 
 > **Complete Lab Guide:** See [TEAMMATE_HANDOFF_GUIDE.md](TEAMMATE_HANDOFF_GUIDE.md) for full physical setup diagrams, center-of-mass balancing guide, and Bessel's formula derivation.
 
-### Option A: One-Click Run (via `run.bat`)
-1. Download this repo as a ZIP (`<> Code` -> `Download ZIP`) and extract it.
+### How to Run:
+1. Download this repo as a ZIP (click the green **`<> Code`** button -> **`Download ZIP`**) and extract it.
 2. Plug the ESP8266 NodeMCU into the PC via USB.
 3. Double-click **`run.bat`**. It will automatically check Python, auto-install any missing dependencies (`PyQt5`, `pyqtgraph`, `numpy`, `pyserial`), and launch the application window.
-
-### Option B: Standalone Pre-compiled Executable (Zero Python Required)
-1. Extract `KatersPendulum_Standalone.zip` (or run `dist/KatersPendulum/KatersPendulum.exe`).
-2. Double-click **`KatersPendulum.exe`**—runs directly without needing Python or Pip installed.
 
 ### 4-Step Wizard Workflow:
 1. **Step 1 — Setup**: Select COM port, enter Knife-Edge distance $L = 1.000\text{ m}$ and distances to Center of Mass ($h_1 \approx 0.43\text{ m}$, $h_2 \approx 0.57\text{ m}$), and click **Connect**.

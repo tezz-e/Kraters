@@ -142,8 +142,6 @@ In the lab, the pendulum rod has two clamping collars with triangular steel wedg
 
 ## 3. How to Get & Run the Software Tomorrow
 
-### Option A: From GitHub (Standard Route)
-If downloading directly from GitHub onto the lab computer:
 1. **Open browser:** Go to [https://github.com/tezz-e/Kraters](https://github.com/tezz-e/Kraters).
 2. **Download ZIP:** Click the green **`<> Code`** button at the top right, then click **`Download ZIP`**.
 3. **Extract:** Right-click the downloaded `Kraters-main.zip` file $\rightarrow$ select **`Extract All...`** $\rightarrow$ click **Extract**.
@@ -157,20 +155,9 @@ If downloading directly from GitHub onto the lab computer:
 
 ---
 
-### Option B: Pre-Compiled Standalone ZIP (No Python Required)
-If the lab computer does not have Python and you do not want to install Python:
-1. Download or copy **`KatersPendulum_Standalone.zip`** (shared via Google Drive, WhatsApp, or USB pendrive).
-2. Extract the ZIP file.
-3. Open the folder and double-click **`KatersPendulum.exe`**.
-4. The application launches immediately—zero Python, zero terminal, zero dependencies required!
-
----
-
 ## 4. In-App Step-by-Step Lab Procedure
 
----
-
-### Step 2: Screen 1 — Setup Page
+### Step 1: Screen 1 — Setup Page
 1. **COM Port:** Select your port (usually `COM13` or the available CH340 port) and click **"Connect"**.
 2. **Experiment Geometry & Parameters:**
    * **Knife-edge distance ($L$):** Set to `1.0000 m` (or measure your exact blade-to-blade spacing).
@@ -182,7 +169,7 @@ If the lab computer does not have Python and you do not want to install Python:
 
 ---
 
-### Step 3: Screen 2 — Pivot 1 Trial
+### Step 2: Screen 2 — Pivot 1 Trial
 1. Hang the pendulum on **Knife Edge 1** (heavy cylinder near the top pivot).
 2. Ensure the pendulum is hanging completely still.
 3. Click **"Calibrate Zero"** (takes $\approx 3$ seconds). Status turns green: *"Calibrated & Ready"*.
@@ -194,7 +181,7 @@ If the lab computer does not have Python and you do not want to install Python:
 
 ---
 
-### Step 4: Screen 3 — Pivot 2 Trial
+### Step 3: Screen 3 — Pivot 2 Trial
 1. Carefully lift the pendulum off the wall bracket, **invert it**, and hang it on **Knife Edge 2** (heavy cylinder is now near the bottom).
 2. Keep the pendulum completely still.
 3. Click **"Calibrate Zero"**.
@@ -205,7 +192,7 @@ If the lab computer does not have Python and you do not want to install Python:
 
 ---
 
-### Step 5: Screen 4 — Results & Exports
+### Step 4: Screen 4 — Results & Exports
 1. The dashboard immediately displays the side-by-side comparison table:
    * **$T_1$** ($\approx 1.69\text{ s}$)
    * **$T_2$** ($\approx 1.77\text{ s}$)
@@ -216,12 +203,12 @@ If the lab computer does not have Python and you do not want to install Python:
 2. **If you ever need to adjust parameters:**
    Use the **"Geometry Parameters & Live Recalculation"** bar right above the decay plot:
    Type your new $L$ or $(h_1 - h_2)$ and click **"⟳ Recalculate g"** — the table updates instantly!
-3. Click **"💾 Export Raw CSV Data"** to save the full raw waveform CSV.
+3. Click **"💾 Export Raw CSV Data"** to save the full raw waveform CSV. File Explorer will automatically pop open to this folder.
 4. Click **"📋 Export Session Summary JSON"** to save the final report.
 
 ---
 
-## 4. Quick Troubleshooting Cheat Sheet
+## 5. Quick Troubleshooting Cheat Sheet
 
 | Problem | Cause | Quick Fix |
 | :--- | :--- | :--- |
