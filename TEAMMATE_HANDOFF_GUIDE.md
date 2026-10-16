@@ -203,8 +203,7 @@ In the lab, the pendulum rod has two clamping collars with triangular steel wedg
 2. **If you ever need to adjust parameters:**
    Use the **"Geometry Parameters & Live Recalculation"** bar right above the decay plot:
    Type your new $L$ or $(h_1 - h_2)$ and click **"⟳ Recalculate g"** — the table updates instantly!
-3. Click **"💾 Export Raw CSV Data"** to save the full raw waveform CSV. File Explorer will automatically pop open to this folder.
-4. Click **"📋 Export Session Summary JSON"** to save the final report.
+3. Click **"💾 Export All Experiment Data (CSV + JSON)"** to save both raw CSV files and the JSON summary in one click. Windows File Explorer will automatically pop open to this folder so you can drag and drop them to send!
 
 ---
 

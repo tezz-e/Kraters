@@ -66,8 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.trial2_page.recording_started.connect(lambda: self.logger.start_csv("pivot2"))
         self.trial2_page.recording_stopped.connect(self.logger.stop_csv)
 
-        self.results_page.export_csv_btn.clicked.connect(self._export_csv)
-        self.results_page.export_json_btn.clicked.connect(self._export_json)
+        self.results_page.export_btn.clicked.connect(self._export_all_data)
 
         # ── Update timer ────────────────────────────
         self.timer = QtCore.QTimer()
@@ -211,39 +210,30 @@ class MainWindow(QtWidgets.QMainWindow):
         self.results_page.populate(self.experiment)
         self.stack.setCurrentIndex(3)
 
-    def _export_json(self):
+    def _export_all_data(self):
+        # 1. Save JSON session summary
         results = self.experiment.compute_results()
-        path = self.logger.save_session(results)
-        folder = os.path.dirname(os.path.abspath(path))
-        if hasattr(os, 'startfile'):
-            try:
-                os.startfile(folder)
-            except Exception:
-                pass
-        QtWidgets.QMessageBox.information(
-            self, "Session Summary Exported",
-            f"Results saved to:\n{path}\n\nFolder opened in File Explorer:\n{folder}"
-        )
+        json_path = self.logger.save_session(results)
+        folder = os.path.dirname(os.path.abspath(json_path))
 
-    def _export_csv(self):
+        # 2. Collect recorded CSV files and JSON summary
         csv_files = getattr(self.logger, 'saved_csvs', [])
-        folder = os.path.abspath(self.logger.output_dir)
+        saved_items = [f"Raw CSV: {os.path.basename(f)}" for f in csv_files]
+        saved_items.append(f"Summary JSON: {os.path.basename(json_path)}")
+
+        # 3. Automatically open folder in Windows File Explorer
         if hasattr(os, 'startfile'):
             try:
                 os.startfile(folder)
             except Exception:
                 pass
-        if csv_files:
-            file_list = "\n".join([os.path.basename(f) for f in csv_files])
-            QtWidgets.QMessageBox.information(
-                self, "Exported Raw CSV Data",
-                f"CSV data files recorded in this session:\n\n{file_list}\n\nFolder opened in File Explorer:\n{folder}"
-            )
-        else:
-            QtWidgets.QMessageBox.information(
-                self, "Export Raw CSV Data",
-                f"Data folder:\n{folder}\n\n(No CSV recorded yet in this session)"
-            )
+
+        file_list_str = "\n".join([f"  • {item}" for item in saved_items])
+        QtWidgets.QMessageBox.information(
+            self, "Data Exported Successfully",
+            f"All experimental data files saved:\n\n{file_list_str}\n\n"
+            f"Folder opened in File Explorer:\n{folder}"
+        )
 
     def _update(self):
         """Main update loop: drain serial queue, feed to current trial."""

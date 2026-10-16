@@ -105,15 +105,14 @@ class ResultsPage(QtWidgets.QWidget):
 
         layout.addLayout(bottom, stretch=2)
 
-        # ── Export buttons ──────────────────────────
-        export_row = QtWidgets.QHBoxLayout()
-        self.export_csv_btn = QtWidgets.QPushButton("💾 Export Raw CSV Data")
-        self.export_csv_btn.setStyleSheet("padding: 10px; font-size: 14px; font-weight: bold;")
-        self.export_json_btn = QtWidgets.QPushButton("📋 Export Session Summary JSON")
-        self.export_json_btn.setStyleSheet("padding: 10px; font-size: 14px; font-weight: bold; background: #00d2ff; color: #111;")
-        export_row.addWidget(self.export_csv_btn)
-        export_row.addWidget(self.export_json_btn)
-        layout.addLayout(export_row)
+        # ── Export button ───────────────────────────
+        self.export_btn = QtWidgets.QPushButton("💾 Export All Experiment Data (CSV + JSON)")
+        self.export_btn.setStyleSheet(
+            "padding: 12px; font-size: 15px; font-weight: bold; background: #00d2ff; color: #111; border-radius: 6px;"
+        )
+        self.export_csv_btn = self.export_btn
+        self.export_json_btn = self.export_btn
+        layout.addWidget(self.export_btn)
 
     def populate(self, experiment: Experiment):
         """Fill the dashboard with results from a completed experiment."""
