@@ -49,18 +49,21 @@ physicsproject/
 
 ---
 
-## Quick Start
+## Quick Start (For Lab Sessions)
 
-### 1. Launch the Desktop App
+> **Complete Lab Guide:** See [TEAMMATE_HANDOFF_GUIDE.md](TEAMMATE_HANDOFF_GUIDE.md) for full physical setup diagrams, center-of-mass balancing guide, and Bessel's formula derivation.
 
-From the `physicsproject/python` directory:
+### Option A: One-Click Run (via `run.bat`)
+1. Download this repo as a ZIP (`<> Code` -> `Download ZIP`) and extract it.
+2. Plug the ESP8266 NodeMCU into the PC via USB.
+3. Double-click **`run.bat`**. It will automatically check Python, auto-install any missing dependencies (`PyQt5`, `pyqtgraph`, `numpy`, `pyserial`), and launch the application window.
 
-```powershell
-python main.py
-```
+### Option B: Standalone Pre-compiled Executable (Zero Python Required)
+1. Extract `KatersPendulum_Standalone.zip` (or run `dist/KatersPendulum/KatersPendulum.exe`).
+2. Double-click **`KatersPendulum.exe`**—runs directly without needing Python or Pip installed.
 
-### 2. Follow the 4-Step Wizard:
-1. **Step 1 — Setup**: Select `COM13` (or your detected CH340 port), enter knife-edge distance $L$, and click **Connect**.
-2. **Step 2 — Pivot 1 Trial**: Hang pendulum on knife-edge 1. Click **Calibrate** while still, push the pendulum gently, click **Start Recording**, record 20–30 oscillations, click **Stop Recording**, and enter your manual stopwatch time for comparison.
-3. **Step 3 — Pivot 2 Trial**: Flip the pendulum to knife-edge 2 and repeat.
-4. **Step 4 — Results & Comparison**: View the side-by-side comparison table showing $T_1$, $T_2$, amplitude-corrected $T_0$, calculated $g$, percentage error, and exponential decay curve. Click **Export Session Summary JSON** to save your report data.
+### 4-Step Wizard Workflow:
+1. **Step 1 — Setup**: Select COM port, enter Knife-Edge distance $L = 1.000\text{ m}$ and distances to Center of Mass ($h_1 \approx 0.43\text{ m}$, $h_2 \approx 0.57\text{ m}$), and click **Connect**.
+2. **Step 2 — Pivot 1 Trial**: Hang pendulum on knife-edge 1 (heavy weight near top). Click **Calibrate Zero** while still, deflect gently ($4^\circ\text{--}5^\circ$), click **Start Trial**, record 40–50 oscillations, and proceed to Pivot 2.
+3. **Step 3 — Pivot 2 Trial**: Invert the pendulum to knife-edge 2 (heavy weight near bottom) and repeat.
+4. **Step 4 — Results & Comparison**: View the side-by-side comparison table showing $T_1$, $T_2$, Borda amplitude-corrected $T_0$, calculated $g$ ($\approx 9.81\text{ m/s}^2$), and error %. Live parameters can be recalculated directly on screen. Export raw CSV waveforms and JSON summaries with a single click.

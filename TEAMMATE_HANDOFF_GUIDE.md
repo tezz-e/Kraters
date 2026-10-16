@@ -140,12 +140,33 @@ In the lab, the pendulum rod has two clamping collars with triangular steel wedg
 
 ---
 
-## 3. Step-by-Step Procedure for Tomorrow's Run
+## 3. How to Get & Run the Software Tomorrow
 
-### Step 1: Launch the Software (One Click)
-* Plug the ESP8266 NodeMCU into the PC via USB.
-* In the project folder `physicsproject`, **double-click `run.bat`** (or `dist\KatersPendulum\KatersPendulum.exe`).
-* The application window opens immediately.
+### Option A: From GitHub (Standard Route)
+If downloading directly from GitHub onto the lab computer:
+1. **Open browser:** Go to [https://github.com/tezz-e/Kraters](https://github.com/tezz-e/Kraters).
+2. **Download ZIP:** Click the green **`<> Code`** button at the top right, then click **`Download ZIP`**.
+3. **Extract:** Right-click the downloaded `Kraters-main.zip` file $\rightarrow$ select **`Extract All...`** $\rightarrow$ click **Extract**.
+4. **Connect Hardware:** Plug the ESP8266 NodeMCU into the PC using the micro-USB cable.
+5. **Run:** Open the extracted `Kraters-main` folder and **double-click `run.bat`**:
+   * It auto-detects Python on the system (`py` or `python`).
+   * It checks for all required libraries (`PyQt5`, `pyqtgraph`, `numpy`, `pyserial`) and installs them automatically if missing.
+   * It launches the Kater's Pendulum measurement app window automatically.
+
+*(Note: If Python is not installed on that computer, `run.bat` will display a message to install Python 3.10+ from python.org. Be sure to check "Add Python to PATH" during installation).*
+
+---
+
+### Option B: Pre-Compiled Standalone ZIP (No Python Required)
+If the lab computer does not have Python and you do not want to install Python:
+1. Download or copy **`KatersPendulum_Standalone.zip`** (shared via Google Drive, WhatsApp, or USB pendrive).
+2. Extract the ZIP file.
+3. Open the folder and double-click **`KatersPendulum.exe`**.
+4. The application launches immediately—zero Python, zero terminal, zero dependencies required!
+
+---
+
+## 4. In-App Step-by-Step Lab Procedure
 
 ---
 
