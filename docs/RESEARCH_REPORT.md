@@ -1,10 +1,5 @@
 # Precision Determination of Gravitational Acceleration \(g\) via a Digital-Telemetry Reversible Compound Pendulum and Bessel's Asymmetric Formulation
 
-**Author:** Physics Laboratory Research Group  
-**Affiliation:** Department of Physics & Applied Instrumentation  
-**Date:** October 17, 2026  
-**Target Publication Format:** *American Journal of Physics* / *Review of Scientific Instruments*  
-
 ---
 
 ## Abstract
