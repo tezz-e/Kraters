@@ -313,8 +313,14 @@ subprocess.run(cmd, check=True)
 
 if os.path.exists(PDF_OUT):
     size_kb = os.path.getsize(PDF_OUT) / 1024.0
-    print(f"[SUCCESS] PDF generated successfully!")
-    print(f"Path: {PDF_OUT}")
+    desktop_pdf = r"c:\Users\manee\Desktop\Katers_Pendulum_Research_Report.pdf"
+    import shutil
+    shutil.copy2(PDF_OUT, desktop_pdf)
+    print(f"[SUCCESS] PDF generated and copied to Desktop successfully!")
+    print(f"Local Path: {PDF_OUT}")
+    print(f"Desktop Path: {desktop_pdf}")
     print(f"Size: {size_kb:.1f} KB")
 else:
     print("[ERROR] PDF generation failed.")
+
+

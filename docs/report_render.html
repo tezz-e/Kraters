@@ -227,14 +227,14 @@ window.MathJax = {
 <h1>Precision Determination of Gravitational Acceleration $g$ via a Digital-Telemetry Reversible Compound Pendulum and Bessel's Asymmetric Formulation</h1>
 <hr />
 <h2>Abstract</h2>
-<p>We report on the high-precision determination of the local gravitational acceleration $g$ using a modern digital-telemetry reversible compound pendulum (Kater's pendulum). Rather than relying on classical optical cathetometers or manually triggered stopwatches, our apparatus integrates an embedded 6-degree-of-freedom inertial measurement unit (MPU-6050) sampling at $100\text{ Hz}$, streaming real-time angular velocity and tri-axial acceleration. Using sub-sample linear interpolation at gyroscope zero-crossings, half-swing numerical velocity integration ($\theta_0 = \frac{1}{2}\int |\omega| dt$), and per-cycle analytic Borda finite-amplitude circular corrections, we evaluate two complete multi-trial datasets gathered across independent laboratory sessions. </p>
-<p>In Dataset 1 (October 15, 2026), across $N_1 = 49$ and $N_2 = 52$ oscillations, we obtain corrected periods of $T_{1,0} = 1.69042 \pm 0.00090\text{ s}$ (sample SD, standard error of the mean $\sigma_{\bar{T}} = 0.128\text{ ms}$) and $T_{2,0} = 1.77322 \pm 0.00144\text{ s}$ ($\sigma_{\bar{T}} = 0.200\text{ ms}$). Applying Bessel's asymmetric compound pendulum formula for knife-edge separation $L = 1.0000 \pm 0.0005\text{ m}$ and center-of-mass balance asymmetry $h_1 - h_2 = -0.1400 \pm 0.0014\text{ m}$ yields $g = 9.8079 \pm 0.0264\text{ m/s}^2$ ($\pm 0.27\%$ total analytical uncertainty), in agreement with conventional standard gravity $g_0 = 9.80665\text{ m/s}^2$ ($+0.013\%$ relative discrepancy, well within the experimental uncertainty budget). In Dataset 2 (October 17, 2026), across $N_1 = 39$ and $N_2 = 105$ oscillations, we obtain $T_{1,0} = 1.68440 \pm 0.00160\text{ s}$ ($\sigma_{\bar{T}} = 0.257\text{ ms}$) and $T_{2,0} = 1.77187 \pm 0.00706\text{ s}$ ($\sigma_{\bar{T}} = 0.689\text{ ms}$), yielding $g = 9.7045 \pm 0.0381\text{ m/s}^2$ ($-1.04\%$ relative discrepancy). </p>
+<p>We report on the high-precision determination of the local gravitational acceleration $g$ using a modern digital-telemetry reversible compound pendulum (Kater's pendulum). Rather than relying on classical optical cathetometers or manually triggered stopwatches, our apparatus integrates an embedded 6-degree-of-freedom inertial measurement unit (MPU-6050) sampling at $100\text{ Hz}$, streaming real-time angular velocity and tri-axial acceleration. Using sub-sample linear interpolation at gyroscope zero-crossings, half-swing numerical velocity integration ($\theta_0 = \frac{1}{2}\int |\omega| dt$), and per-cycle analytic Borda finite-amplitude circular corrections, we evaluate two complete multi-trial datasets gathered across independent laboratory sessions.</p>
+<p>In Dataset 1 (October 15, 2026), across $N_1 = 49$ and $N_2 = 52$ oscillations, we obtain corrected periods of $T_{1,0} = 1.69042 \pm 0.00090\text{ s}$ (sample SD, standard error of the mean $\sigma_{\bar{T}} = 0.128\text{ ms}$) and $T_{2,0} = 1.77322 \pm 0.00144\text{ s}$ ($\sigma_{\bar{T}} = 0.200\text{ ms}$). Applying Bessel's asymmetric compound pendulum formula for knife-edge separation $L = 1.0000 \pm 0.0005\text{ m}$ and center-of-mass balance asymmetry $h_1 - h_2 = -0.1400 \pm 0.0014\text{ m}$ yields $g = 9.8079 \pm 0.0264\text{ m/s}^2$ ($\pm 0.27\%$ total analytical uncertainty), in agreement with conventional standard gravity $g_0 = 9.80665\text{ m/s}^2$ ($+0.013\%$ relative discrepancy, well within the experimental uncertainty budget). In Dataset 2 (October 17, 2026), across $N_1 = 39$ and $N_2 = 105$ oscillations, we obtain $T_{1,0} = 1.68440 \pm 0.00160\text{ s}$ ($\sigma_{\bar{T}} = 0.257\text{ ms}$) and $T_{2,0} = 1.77187 \pm 0.00706\text{ s}$ ($\sigma_{\bar{T}} = 0.689\text{ ms}$), yielding $g = 9.7045 \pm 0.0381\text{ m/s}^2$ ($-1.04\%$ relative discrepancy).</p>
 <p>Furthermore, we provide an engineering post-mortem explaining the origins of three initial anomalies observed during live testing: (i) the naive symmetric formula artifact producing $g \approx 13.2\text{--}13.8\text{ m/s}^2$, (ii) the low-amplitude angular speed cutoff bug that generated missed zero crossings and collapsed Bessel's calculation to $g \approx 4.81\text{ m/s}^2$ ($-50.87\%$), and (iii) the mounting tilt asymmetry that caused decay-plot splitting. The physical telemetry from both sessions is demonstrated to be experimentally robust, repeatable, and capable of sub-percent precision ($\pm 0.27\%$).</p>
 <hr />
 <h2>1. Introduction &amp; Historical Context</h2>
 <p>The determination of the acceleration due to terrestrial gravity, $g$, has historically occupied a foundational role in geodesy, metrology, and classical mechanics. In 1818, Captain Henry Kater designed the reversible compound pendulum to overcome the principal obstacle plaguing simple string pendulums: the impossibility of locating the exact center of oscillation of a finite extended mass [1]. By invoking Christiaan Huygens's dynamical principle of reciprocity—stipulating that the center of suspension and center of oscillation are mutually interchangeable—Kater proved that if a rigid bar oscillates with identical periods $T_1 = T_2 = T$ about two opposing knife edges, the distance $L$ between the edges corresponds precisely to the equivalent length of a simple pendulum:</p>
 <p>$$g = \frac{4\pi^2 L}{T^2}$$</p>
-<p>However, mechanically adjusting movable brass counterweights until $T_1$ and $T_2$ are identical to within microsecond precision is tedious and sensitive to ambient thermal and mechanical drifts. To eliminate this operational bottleneck, Friedrich Wilhelm Bessel developed an exact analytical formulation in 1828 for compound pendulums with unequal periods [2]. Bessel demonstrated that by incorporating the asymmetry of the center of mass relative to the two knife edges $(h_1 - h_2)$, one can compute $g$ directly from two non-identical periods $T_1 \neq T_2$ without requiring mechanical period matching.</p>
+<p>However, mechanically adjusting movable brass counterweights until $T_1$ and $T_2$ are identical to within sub-millisecond precision is tedious and sensitive to ambient thermal and mechanical drifts. To eliminate this operational bottleneck, Friedrich Wilhelm Bessel developed an exact analytical formulation in 1828 for compound pendulums with unequal periods [2]. Bessel demonstrated that by incorporating the asymmetry of the center of mass relative to the two knife edges $(h_1 - h_2)$, one can compute $g$ directly from two non-identical periods $T_1 \neq T_2$ without requiring mechanical period matching.</p>
 <p>In this work, we modernize the classical Kater–Bessel experiment by coupling a rigid reversible bar to a digital inertial measurement telemetry pipeline. By streaming angular velocity $\omega_z(t)$ at $100\text{ Hz}$ from an embedded Micro-Electro-Mechanical Systems (MEMS) sensor, we achieve high statistical power over hundreds of cycles, eliminate human reaction time errors, record full amplitude decay envelopes, and perform rigorous propagation of uncertainty.</p>
 <hr />
 <h2>2. Theoretical Principles</h2>
@@ -264,14 +264,16 @@ h_1 T_1^2 - h_2 T_2^2 &= \frac{L + (h_1 - h_2)}{2} T_1^2 - \frac{L - (h_1 - h_2)
 <p>Multiplying through by $2$ and solving for $g$ yields <strong>Bessel's exact formula</strong>:</p>
 <p>$$g = \frac{8\pi^2}{\dfrac{T_1^2 + T_2^2}{L} + \dfrac{T_1^2 - T_2^2}{h_1 - h_2}} \tag{4}$$</p>
 <h4>Mathematical Significance of the Asymmetric Formulation</h4>
-<p>Bessel's formula possesses a significant error-attenuating property:
-* In the denominator, the dominant term is $\frac{T_1^2 + T_2^2}{L}$. The knife-edge separation $L$ can be measured with high accuracy using a precision vernier cathetometer ($\Delta L \approx \pm 0.5\text{ mm}$, or $\pm 0.05\%$).
-* The second term, $\frac{T_1^2 - T_2^2}{h_1 - h_2}$, contains the center-of-mass balance asymmetry $(h_1 - h_2)$. Because finding the center of mass by knife-edge balance introduces an experimental uncertainty ($\Delta(h_1 - h_2) \approx \pm 1.4\text{ mm}$, or $\pm 1.0\%$), this term would normally inject large errors into $g$.
-* However, because $T_1$ and $T_2$ are close in value ($T_1 \approx 1.69\text{ s}$, $T_2 \approx 1.77\text{ s}$), the numerator $(T_1^2 - T_2^2)$ is small ($2.86 - 3.14 = -0.28\text{ s}^2$).
-* Defining the denominator sum $\Phi = \frac{T_1^2 + T_2^2}{L} + \frac{T_1^2 - T_2^2}{h_1 - h_2}$, the relative sensitivity of $g$ to $(h_1 - h_2) \equiv d$ is:
+<p>Bessel's formula possesses a significant error-attenuating property:</p>
+<ul>
+<li>In the denominator, the dominant term is $\frac{T_1^2 + T_2^2}{L}$. The knife-edge separation $L$ can be measured with high accuracy using a precision vernier cathetometer ($\Delta L \approx \pm 0.5\text{ mm}$, or $\pm 0.05\%$).</li>
+<li>The second term, $\frac{T_1^2 - T_2^2}{h_1 - h_2}$, contains the center-of-mass balance asymmetry $(h_1 - h_2)$. Because finding the center of mass introduces an experimental uncertainty ($\Delta(h_1 - h_2) \approx \pm 1.4\text{ mm}$, or $\pm 1.0\%$), this term would normally inject large errors into $g$.</li>
+<li>However, because $T_1$ and $T_2$ are close in value ($T_1 \approx 1.69\text{ s}$, $T_2 \approx 1.77\text{ s}$), the numerator $(T_1^2 - T_2^2)$ is small ($2.86 - 3.14 = -0.28\text{ s}^2$).</li>
+<li>Defining the denominator sum $\Phi = \frac{T_1^2 + T_2^2}{L} + \frac{T_1^2 - T_2^2}{h_1 - h_2}$, the relative sensitivity of $g$ to $(h_1 - h_2) \equiv d$ is:
   $$\frac{\delta g}{g} \approx \left( \frac{T_1^2 - T_2^2}{\Phi d} \right) \frac{\delta d}{d}$$
-  For our apparatus, $\Phi \approx 8.05\text{ s}^2/\text{m}$ and $\frac{T_1^2 - T_2^2}{d} \approx +2.05\text{ s}^2/\text{m}$, yielding a multiplier of $\frac{2.05}{8.05} \approx 0.25$.
-* Consequently, relative uncertainty in the center of mass is attenuated by a factor of approximately <strong>$4\times$</strong>: a $1.0\%$ measurement uncertainty in $(h_1 - h_2)$ propagates to only a $\approx 0.25\%$ uncertainty in $g$. Because period errors are negligible over tens of cycles, the balance asymmetry measurement remains the primary contributor ($\approx 89\%$) to the total experimental error variance.</p>
+  For our apparatus, $\Phi \approx 8.05\text{ s}^2/\text{m}$ and $\frac{T_1^2 - T_2^2}{d} \approx +2.05\text{ s}^2/\text{m}$, yielding a multiplier of $\frac{2.05}{8.05} \approx 0.25$.</li>
+<li>Consequently, relative uncertainty in the center of mass is attenuated by a factor of approximately <strong>$4\times$</strong>: a $1.0\%$ measurement uncertainty in $(h_1 - h_2)$ propagates to only a $\approx 0.25\%$ uncertainty in $g$. Because period errors are negligible over tens of cycles, the balance asymmetry measurement remains the primary contributor ($\approx 89\%$) to the total experimental error variance.</li>
+</ul>
 <h3>2.3 Finite-Amplitude (Borda) Circular Correction</h3>
 <p>The linearizing approximation $\sin\theta \approx \theta$ introduces systematic period elongation at finite release angles. Expanding the complete elliptic integral of the first kind $K(\sin(\theta_0/2))$ to second order relates the observed finite-amplitude period $T(\theta_0)$ to the infinitesimal period $T_0$ [3]:</p>
 <p>$$T(\theta_0) = T_0 \left( 1 + \frac{1}{4} \sin^2\left(\frac{\theta_0}{2}\right) + \dots \right) \approx T_0 \left( 1 + \frac{\theta_0^2}{16} \right)$$</p>
@@ -288,15 +290,17 @@ h_1 T_1^2 - h_2 T_2^2 &= \frac{L + (h_1 - h_2)}{2} T_1^2 - \frac{L - (h_1 - h_2)
 <hr />
 <h2>3. Experimental Apparatus &amp; Digital Telemetry Architecture</h2>
 <h3>3.1 Physical Pendulum Construction</h3>
-<p>The physical apparatus consists of a precision cold-rolled rectangular steel rod (nominal total length 1.20 m, cross-section 12 mm × 12 mm) equipped with:
-1. <strong>Knife Edges $K_1$ and $K_2$:</strong> Hardened carbon steel triangular wedge knife edges facing inward toward each other, securely clamped at a nominal separation of $L = 1.0000\text{ m}$ with measurement uncertainty $\pm 0.5\text{ mm}$ ($L = 1.0000 \pm 0.0005\text{ m}$).
-2. <strong>Asymmetric Cylindrical Bobs:</strong>
-   * Heavy Bob (≈ 1.5 kg) fixed permanently adjacent to Knife Edge 1.
-   * Light Bob (≈ 0.5 kg) clamped near Knife Edge 2.
-3. <strong>Center of Mass Determination:</strong> The center of mass of the assembled rod was determined by horizontal knife-edge balancing, establishing:
-   * $h_1 = 0.4300 \pm 0.0010\text{ m}$ (Knife Edge 1 to CoM)
-   * $h_2 = 0.5700 \pm 0.0010\text{ m}$ (Knife Edge 2 to CoM)
-   * Asymmetry: $h_1 - h_2 = -0.1400 \pm 0.0014\text{ m}$ (combined in quadrature from individual $\pm 1.0\text{ mm}$ balance line measurements).</p>
+<p>The physical apparatus consists of a precision cold-rolled rectangular steel rod (nominal total length 1.20 m, cross-section 12 mm × 12 mm) equipped with:</p>
+<ol>
+<li><strong>Knife Edges $K_1$ and $K_2$:</strong> Hardened carbon steel triangular wedge knife edges facing inward toward each other, securely clamped at a nominal separation of $L = 1.0000\text{ m}$ with measurement uncertainty $\pm 0.5\text{ mm}$ ($L = 1.0000 \pm 0.0005\text{ m}$).</li>
+<li><strong>Asymmetric Cylindrical Bobs:</strong></li>
+<li>Heavy Bob (≈ 1.5 kg) fixed permanently adjacent to Knife Edge 1.</li>
+<li>Light Bob (≈ 0.5 kg) clamped near Knife Edge 2.</li>
+<li><strong>Center of Mass Determination:</strong> The center of mass of the assembled rod was located by horizontal knife-edge balancing, establishing the balance position. Independent vernier distance measurements from the respective knife-edge apexes to the marked balance line yielded:</li>
+<li>$h_1 = 0.4300 \pm 0.0010\text{ m}$ (Knife Edge 1 to CoM)</li>
+<li>$h_2 = 0.5700 \pm 0.0010\text{ m}$ (Knife Edge 2 to CoM)</li>
+<li>Asymmetry: $h_1 - h_2 = -0.1400 \pm 0.0014\text{ m}$ (combined in quadrature from individual $\pm 1.0\text{ mm}$ balance line measurements).</li>
+</ol>
 <pre><code>        Pivot 1 (K1)                                    Pivot 2 (K2)
          ▼                                               ▼
          |===|=======================●===================|===|
@@ -305,11 +309,13 @@ h_1 T_1^2 - h_2 T_2^2 &= \frac{L + (h_1 - h_2)}{2} T_1^2 - \frac{L - (h_1 - h_2)
              |------------------- L = 1.000m ----------------|
 </code></pre>
 <h3>3.2 Inertial Telemetry &amp; Signal Acquisition Pipeline</h3>
-<p>To minimize parasitic external restoring torques, an ultra-low-profile telemetry module is mounted along the rod axis and connected via a lightweight, highly flexible strain-relieved USB cable exiting directly along the knife-edge pivot axis:
-* <strong>Microcontroller:</strong> ESP8266 controller running a hardware timer-driven ISR.
-* <strong>Sensor:</strong> TDK InvenSense MPU-6050 6-DoF Inertial Measurement Unit (tri-axis gyroscope set to $\pm 250^\circ/\text{s}$ range, tri-axis accelerometer set to $\pm 2g$ range).
-* <strong>Sampling Rate:</strong> Continuous streaming at a nominal $100\text{ Hz}$ rate (mean hardware interval $\Delta t = 10.15\text{ ms}$, effective acquisition rate $98.5\text{ Hz}$) via USB-UART serial at $115,200\text{ baud}$.
-* <strong>Real-time Host Engine:</strong> Python 3.13 application leveraging PyQt5 and PyQtGraph for real-time visualization and low-latency digital signal processing.</p>
+<p>To minimize parasitic external restoring torques, an ultra-low-profile telemetry module is mounted along the rod axis and connected via a lightweight, highly flexible strain-relieved USB cable exiting directly along the knife-edge pivot axis:</p>
+<ul>
+<li><strong>Microcontroller:</strong> ESP8266 controller running a hardware timer-driven ISR.</li>
+<li><strong>Sensor:</strong> TDK InvenSense MPU-6050 6-DoF Inertial Measurement Unit (tri-axis gyroscope set to $\pm 250^\circ/\text{s}$ range, tri-axis accelerometer set to $\pm 2g$ range).</li>
+<li><strong>Sampling Rate:</strong> Continuous streaming at a nominal $100\text{ Hz}$ rate (mean hardware interval $\Delta t = 10.15\text{ ms}$, effective acquisition rate $98.5\text{ Hz}$) via USB-UART serial at 115,200 baud.</li>
+<li><strong>Real-time Host Engine:</strong> Python 3.13 application leveraging PyQt5 and PyQtGraph for real-time visualization and low-latency digital signal processing.</li>
+</ul>
 <pre><code>+-------------------------------------------------------------+
 |                      PHYSICAL PENDULUM                      |
 |  [ Knife Edge ] &lt;===&gt; [ MPU-6050 IMU ] &lt;===&gt; [ Rigid Rod ]  |
@@ -335,59 +341,71 @@ h_1 T_1^2 - h_2 T_2^2 &= \frac{L + (h_1 - h_2)}{2} T_1^2 - \frac{L - (h_1 - h_2)
 <h3>3.3 Zero-Crossing Detection &amp; Sub-Sample Interpolation</h3>
 <p>Period determination relies on detecting zero-crossings of the filtered angular velocity $\omega_z(t)$. When consecutive samples satisfy $\omega[k-1] \cdot \omega[k] \le 0$, sub-sample turning-point timestamps $t_{\text{zero}}$ are recovered via linear interpolation:</p>
 <p>$$t_{\text{zero}} = t_{k-1} - \omega_{k-1} \frac{t_k - t_{k-1}}{\omega_k - \omega_{k-1}} \tag{8}$$</p>
-<p>By evaluating the elapsed time between alternate zero-crossings with identical slope (e.g. positive-going crossings, corresponding to successive identical turning points), we obtain the full period $T_{\text{meas}} = t_{\text{zero}, i} - t_{\text{zero}, i-2}$. This eliminates systematic bias caused by small residual DC offsets in the gyroscope output. Fig. 1 shows the recorded kinematic waveforms and extracted zero crossings.</p>
+<p>By evaluating the elapsed time between alternate zero-crossings with identical slope (e.g. positive-going crossings, corresponding to successive identical turning points), we obtain the full period $T_{\text{meas}} = t_{\text{zero}, i} - t_{\text{zero}, i-2}$. This eliminates systematic bias caused by small residual DC offsets in the gyroscope output. Fig. 1 shows the recorded kinematic waveforms and extracted zero crossings across both pivot orientations.</p>
 <figure>
   <img src="figures/fig1_waveforms.png" alt="Figure 1: Empirical Kinematic Telemetry Waveforms">
-  <figcaption><strong>Figure 1. Empirical Kinematic Waveforms from Laboratory Telemetry.</strong> (a) Direct angular rate $\omega_z(t)$ measured across a $10\text{ s}$ window under Pivot 1. Red circles highlight sub-sample zero-crossing points, each marking a half-period ($T/2$); alternate same-direction crossings yield the full period $T$. (b) Simultaneous tri-axial linear acceleration telemetry recorded by the onboard MPU-6050 IMU, showing centripetal acceleration modulation along the rod axis ($a_{\text{rod}}$) at twice the fundamental swing frequency ($2\omega_0$).</figcaption>
+  <figcaption><strong>Figure 1. Empirical Kinematic Waveforms from Laboratory Telemetry.</strong> (a) Pivot 1 angular rate $\omega_z(t)$ ($T_1 \approx 1.69\text{ s}$) with red markers at sub-sample zero-crossings. (b) Pivot 2 angular rate $\omega_z(t)$ ($T_2 \approx 1.77\text{ s}$). (c) Pivot 1 tri-axial linear acceleration telemetry showing centripetal acceleration along the rod axis ($a_{\text{rod}} \approx -1.0g$) and transverse acceleration ($a_{\text{perp}} \approx 0.0g$). (d) Pivot 2 inverted acceleration telemetry showing $180^\circ$ gravity reversal ($a_{\text{rod}} \approx +0.95g$) and static tilt ($a_{\text{perp}} \approx +0.20g$).</figcaption>
 </figure>
 
 <hr />
 <h2>4. Software Signal Processing &amp; Post-Mortem Diagnostics</h2>
-<p>During laboratory testing, three prominent anomalies were encountered in initial software builds. Because understanding these artifacts is essential to ensuring experimental integrity, we provide a complete engineering and mathematical post-mortem. Fig. 3 illustrates the diagnostic signatures of these anomalies.</p>
+<p>During laboratory testing, three prominent anomalies were encountered in initial software builds. Because understanding these artifacts is essential to ensuring experimental integrity, we provide a complete engineering and mathematical post-mortem. Fig. 2 illustrates the diagnostic signatures of these anomalies.</p>
 <h3>4.1 Post-Mortem I: The $g \approx 13.2\text{--}13.8\text{ m/s}^2$ Naive Symmetric Formulation Artifact</h3>
 <h4>Symptom</h4>
 <p>In early exploratory trials, the software reported values of $g$ fluctuating between $13.2\text{ m/s}^2$ and $13.8\text{ m/s}^2$, despite raw waveforms displaying clean sinusoidal motion.</p>
 <h4>Cause Analysis</h4>
 <p>The original code routine calculated $g$ using the ideal symmetric Kater formula:</p>
 <p>$$g_{\text{naive}} = \frac{4\pi^2 L}{T^2}$$</p>
-<p>In a reversible pendulum, this formula is <strong>strictly conditional</strong> upon $T_1 = T_2$. When the periods differ (here, $T_1 \approx 1.69\text{ s}$ and $T_2 \approx 1.77\text{ s}$), substituting the observed periods yields:
-* Using Pivot 1 alone ($T_1 = 1.6904\text{ s}$):
-  $$g = \frac{4\pi^2 \times 1.000}{(1.6904)^2} = \frac{39.4784}{2.8575} = \mathbf{13.816\text{ m/s}^2}$$
-* Using the arithmetic mean period $T_{\text{avg}} = \frac{1.6904 + 1.7732}{2} = 1.7318\text{ s}$:
-  $$g = \frac{4\pi^2 \times 1.000}{(1.7318)^2} = \frac{39.4784}{2.9991} = \mathbf{13.163\text{ m/s}^2}$$</p>
+<p>In a reversible pendulum, this formula is <strong>strictly conditional</strong> upon $T_1 = T_2$. When the periods differ (here, $T_1 \approx 1.69\text{ s}$ and $T_2 \approx 1.77\text{ s}$), substituting the observed periods yields:</p>
+<ul>
+<li>Using Pivot 1 alone ($T_1 = 1.6904\text{ s}$):
+  $$g = \frac{4\pi^2 \times 1.000}{(1.6904)^2} = \frac{39.4784}{2.8575} = \mathbf{13.816\text{ m/s}^2}$$</li>
+<li>Using the arithmetic mean period $T_{\text{avg}} = \frac{1.6904 + 1.7732}{2} = 1.7318\text{ s}$:
+  $$g = \frac{4\pi^2 \times 1.000}{(1.7318)^2} = \frac{39.4784}{2.9991} = \mathbf{13.163\text{ m/s}^2}$$</li>
+</ul>
 <h4>Algorithmic Resolution</h4>
 <p>The software was updated to enforce Bessel's asymmetric formula (Eq. 4). When the exact physical geometry ($L = 1.000\text{ m}$, $h_1 - h_2 = -0.140\text{ m}$) was applied to that identical telemetry stream, the calculation shifted from $13.82\text{ m/s}^2$ to <strong>$9.808\text{ m/s}^2$</strong> without altering the underlying sensor data.</p>
 <h3>4.2 Post-Mortem II: The $g \approx 4.81\text{ m/s}^2$ Low-Amplitude Tail Artifact</h3>
 <h4>Symptom</h4>
 <p>During the live trial on October 17, 2026, the application output $g = 4.8176\text{ m/s}^2$ with a relative discrepancy of $-50.87\%$.</p>
 <h4>Cause Analysis</h4>
-<p>Inspection of the exported telemetry log (<code>20261017_082917_pivot2.csv</code>) revealed that the trial had run for $187.59\text{ s}$ ($18,478\text{ samples}$, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$). 
-1. The trial began with a small initial release amplitude of $\theta_0 \approx 0.96^\circ$, giving an initial peak angular velocity of $\omega_{\text{peak}} \approx 0.96^\circ \times \frac{2\pi}{1.772\text{ s}} \approx 3.4^\circ/\text{s}$.
-2. The angular velocity threshold for turning-point detection was hardcoded to a fixed value of $\omega_{\text{peak, min}} = 3.0^\circ/\text{s}$ ($0.0524\text{ rad/s}$).
-3. Within 18 oscillations ($\approx 32\text{ s}$), natural damping reduced the peak amplitude below $\approx 0.85^\circ$, dropping peak angular velocity below $3.0^\circ/\text{s}$.
-4. At cycle 19, the swing decayed to $\approx 0.58^\circ$, where peak speed fell to $\omega_{\text{peak}} \approx 0.58^\circ \times \frac{2\pi}{1.772\text{ s}} \approx 2.06^\circ/\text{s} < 3.0^\circ/\text{s}$.
-5. Consequently, the zero-crossing detector failed to register subsequent velocity reversals. It missed one reversal (logging a doubled period of $3.55\text{ s}$) and then two reversals (logging a tripled period of $5.32\text{ s}$), before detections ceased entirely at $t \approx 36\text{ s}$:
+<p>Inspection of the exported telemetry log (<code>20261017_082917_pivot2.csv</code>) revealed that the trial had run for $187.59\text{ s}$ (18,478 samples, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$). </p>
+<ol>
+<li>The trial began with a small initial release amplitude of $\theta_0 \approx 0.96^\circ$, giving an initial peak angular velocity of $\omega_{\text{peak}} \approx 0.96^\circ \times \frac{2\pi}{1.772\text{ s}} \approx 3.4^\circ/\text{s}$.</li>
+<li>The angular velocity threshold for turning-point detection was hardcoded to a fixed value of $\omega_{\text{peak, min}} = 3.0^\circ/\text{s}$ ($0.0524\text{ rad/s}$).</li>
+<li>Over the first 18 oscillations ($\approx 32\text{ s}$), natural damping reduced the peak amplitude toward $\approx 0.85^\circ$.</li>
+<li>At cycles 19–20 ($\approx 34\text{--}36\text{ s}$), the swing amplitude decayed to $\approx 0.82^\circ$, where peak angular velocity dropped to $\omega_{\text{peak}} \approx 0.82^\circ \times \frac{2\pi}{1.772\text{ s}} \approx 2.91^\circ/\text{s} < 3.0^\circ/\text{s}$.</li>
+<li>Consequently, the zero-crossing detector failed to register subsequent velocity reversals. It missed one reversal (logging a doubled period of $3.55\text{ s}$) and then two reversals (logging a tripled period of $5.32\text{ s}$), before detections ceased entirely at $t \approx 36\text{ s}$:
    $$\dots, 1.76966\text{ s}, 1.76644\text{ s}, \mathbf{3.54852\text{ s}} \text{ (}2\times\text{)}, \mathbf{5.31819\text{ s}} \text{ (}3\times\text{)}$$
-6. The unweighted arithmetic mean of all 20 recorded entries became:
-   $$\bar{T}_2 = \frac{18 \times 1.7718 + 3.5485 + 5.3182}{20} = \mathbf{2.0380\text{ s}}$$
-7. In Dataset 2, the true denominator in Bessel's formula is $8.14\text{ s}^2/\text{m}$. Substituting the skewed period $\bar{T}_2 = 2.0380\text{ s}$ alongside $T_1 = 1.6845\text{ s}$ produced a massive perturbation in the asymmetric term:
-   $$\frac{T_1^2 - T_2^2}{h_1 - h_2} = \frac{(1.6845)^2 - (2.0380)^2}{-0.140} = \frac{-1.3159}{-0.140} = \mathbf{+9.399\text{ s}^2/\text{m}}$$
-   The denominator ballooned from $8.14$ to $16.39\text{ s}^2/\text{m}$, collapsing the calculated gravity to:
-   $$g = \frac{8\pi^2}{16.39} = \mathbf{4.817\text{ m/s}^2}$$</p>
+   The pendulum continued oscillating unrecorded down to its terminal amplitude of $\theta_f \approx 0.53^\circ\text{--}0.58^\circ$ at $t = 187.6\text{ s}$.</li>
+<li>The unweighted arithmetic mean of the 20 recorded entries became:
+   $$\bar{T}_2 = \frac{18 \times 1.7718 + 3.5485 + 5.3182}{20} = \mathbf{2.0380\text{ s}}$$</li>
+<li>In Dataset 2, the true denominator in Bessel's formula is $8.14\text{ s}^2/\text{m}$. Substituting the skewed period $\bar{T}_2 = 2.0380\text{ s}$ alongside $T_1 = 1.6845\text{ s}$ perturbed both terms in Bessel's denominator:</li>
+<li>The symmetric term increased:
+     $$\frac{T_1^2 + T_2^2}{L} = \frac{(1.6845)^2 + (2.0380)^2}{1.0000} = 2.8375 + 4.1534 = \mathbf{6.991\text{ s}^2/\text{m}} \quad (\text{vs. true } 5.977\text{ s}^2/\text{m})$$</li>
+<li>The asymmetric term ballooned:
+     $$\frac{T_1^2 - T_2^2}{h_1 - h_2} = \frac{(1.6845)^2 - (2.0380)^2}{-0.140} = \frac{-1.3159}{-0.140} = \mathbf{+9.399\text{ s}^2/\text{m}} \quad (\text{vs. true } +2.158\text{ s}^2/\text{m})$$
+   The combined denominator jumped from $8.14\text{ s}^2/\text{m}$ to $6.991 + 9.399 = \mathbf{16.390\text{ s}^2/\text{m}}$, collapsing the calculated gravity to:
+   $$g = \frac{8\pi^2}{16.390} = \mathbf{4.817\text{ m/s}^2}$$</li>
+</ol>
 <h4>Algorithmic Resolution</h4>
-<p>Three robust software defenses were implemented in <code>DataProcessor</code>:
-1. <strong>Lowered Velocity Gate:</strong> $\omega_{\text{peak, min}}$ was reduced from $3.0^\circ/\text{s}$ to a fixed $0.8^\circ/\text{s}$ ($0.014\text{ rad/s}$), corresponding to an amplitude limit of $\theta_{\text{min}} \approx \frac{0.8^\circ \times 1.77}{2\pi} \approx 0.23^\circ$, allowing clean tracking down to $0.25^\circ$.
-2. <strong>Physical Period Boundary Gate:</strong> Any candidate period outside the physically permissible range for a $1\text{-meter}$ compound pendulum ($0.7\text{ s} < T < 2.6\text{ s}$) is immediately rejected at the detector level.
-3. <strong>Median Outlier Filtering:</strong> In <code>get_mean_period()</code>, periods deviating by $\ge 18\%$ from the trial median ($|T - T_{\text{med}}| / T_{\text{med}} \ge 0.18$) are filtered before evaluating statistical moments.</p>
+<p>Three robust software defenses were implemented in <code>DataProcessor</code>:</p>
+<ol>
+<li><strong>Lowered Velocity Gate:</strong> $\omega_{\text{peak, min}}$ was reduced from $3.0^\circ/\text{s}$ to a fixed $0.8^\circ/\text{s}$ ($0.014\text{ rad/s}$), corresponding to an amplitude limit of $\theta_{\text{min}} \approx \frac{0.8^\circ \times 1.77}{2\pi} \approx 0.23^\circ$, allowing clean tracking down to $0.25^\circ$.</li>
+<li><strong>Physical Period Boundary Gate:</strong> Any candidate period outside the physically permissible range for a $1\text{-meter}$ compound pendulum ($0.7\text{ s} < T < 2.6\text{ s}$) is immediately rejected at the detector level.</li>
+<li><strong>Median Outlier Filtering:</strong> In <code>get_mean_period()</code>, periods deviating by $\ge 18\%$ from the trial median ($|T - T_{\text{med}}| / T_{\text{med}} \ge 0.18$) are filtered before evaluating statistical moments.</li>
+</ol>
 <p>When applied to the raw October 17 log, the algorithm successfully extracts all <strong>$105\text{ valid oscillations}$</strong>, yielding $T_2 = 1.77187\text{ s}$ and <strong>$g = 9.7045\text{ m/s}^2$</strong>.</p>
 <h3>4.3 Post-Mortem III: Inverted Gravity &amp; Decay-Plot Splitting</h3>
 <h4>Symptom</h4>
 <p>In Pivot 2, the real-time peak amplitude decay scatter plot displayed two flat, horizontal rows of dots rather than a single exponentially decaying curve.</p>
 <h4>Cause Analysis</h4>
-<p>When inverting the pendulum for Pivot 2, the accelerometer rod axis experiences inverted gravity ($a_{\text{rod}} \approx +0.95g$ instead of $-1.01g$). Concurrently, a moderate mounting tilt offset of $\theta_{\text{DC}} \approx 11.7^\circ$ ($a_{\text{perp}} \approx 0.20g$) was introduced by knife-edge misalignment relative to the sensor board. When peak amplitude was evaluated as $\theta_{\text{amp}} = |\theta(t)|$ at turning points:
-* Positive peaks: $\theta_{\text{pos}} = 11.7^\circ + 8.0^\circ = 19.7^\circ$
-* Negative peaks: $\theta_{\text{neg}} = |11.7^\circ - 8.0^\circ| = 3.7^\circ$
-Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dynamic mechanical equilibrium, the scatter plot split into two parallel tracks at $19.7^\circ$ and $3.7^\circ$.</p>
+<p>When inverting the pendulum for Pivot 2, the accelerometer rod axis experiences inverted gravity ($a_{\text{rod}} \approx +0.95g$ instead of $-1.01g$). Concurrently, a moderate mounting tilt offset of $\theta_{\text{tilt}} \approx 11.7^\circ$ ($a_{\text{perp}} \approx 0.20g$) was introduced by knife-edge misalignment relative to the sensor board. When peak amplitude was evaluated as $\theta_{\text{amp}} = |\theta(t)|$ at turning points:</p>
+<ul>
+<li>Positive peaks: $\theta_{\text{pos}} = 11.7^\circ + 8.0^\circ = 19.7^\circ$</li>
+<li>Negative peaks: $\theta_{\text{neg}} = |11.7^\circ - 8.0^\circ| = 3.7^\circ$</li>
+</ul>
+<p>Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dynamic mechanical equilibrium, the scatter plot split into two parallel tracks at $19.7^\circ$ and $3.7^\circ$.</p>
 <h4>Algorithmic Resolution</h4>
 <ol>
 <li><strong>Dynamic Gravity Sign Detection:</strong> The rod direction is determined dynamically via $\text{sgn}(\bar{a}_{\text{rod}})$, keeping $\theta_{\text{acc}}$ centered near zero across both upright and inverted orientations.</li>
@@ -396,16 +414,16 @@ Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dyna
    Because the integral of angular speed between turning points ($\omega = 0$) is mathematically equal to the peak-to-peak swing sweep, dividing by $2$ produces the true amplitude independent of any accelerometer DC tilt.</li>
 </ol>
 <figure>
-  <img src="figures/fig3_post_mortem_diagnostics.png" alt="Figure 3: Software Post-Mortem Diagnostics">
-  <figcaption><strong>Figure 3. Software Diagnostic Post-Mortems for Live Laboratory Anomalies.</strong> (a) Decay-plot splitting artifact: static frame projection of equilibrium mounting tilt ($\theta_{\text{DC}} \approx 11.7^\circ$) causes alternating peak bifurcation (red/blue markers), resolved by half-swing angular velocity integration (dashed green curve). (b) Low-amplitude tail threshold failure in Dataset 2: within 18 cycles, peak swing speed dipped below the fixed $3.0^\circ/\text{s}$ gate, resulting in skipped cycles ($3.55\text{ s}$ and $5.32\text{ s}$) that artificially inflated $\bar{T}_2$ and collapsed $g$ to $4.81\text{ m/s}^2$. Re-processing with a fixed $0.8^\circ/\text{s}$ gate and median outlier filtering recovered all 105 valid oscillations.</figcaption>
+  <img src="figures/fig2_post_mortem_diagnostics.png" alt="Figure 2: Software Post-Mortem Diagnostics">
+  <figcaption><strong>Figure 2. Software Diagnostic Post-Mortems for Live Laboratory Anomalies.</strong> (a) Accelerometer tilt bifurcation artifact: static projection of mounting tilt ($\theta_{\text{tilt}} \approx 11.7^\circ$) splits turning-point peak readings into upper and lower tracks ($\approx 19.7^\circ$ vs $\approx 3.7^\circ$, red dashed curve), completely resolved by dynamic half-swing angular velocity integration (blue points, true monotonic decay). (b) Low-amplitude tail threshold failure in Dataset 2: peak swing speed dipped below the fixed $3.0^\circ/\text{s}$ gate at cycle 20, causing missed reversals ($3.55\text{ s}$ and $5.32\text{ s}$) that inflated $\bar{T}_2$ to $2.038\text{ s}$ and collapsed $g$ to $4.81\text{ m/s}^2$. Software filtering and a $0.8^\circ/\text{s}$ gate recovered all 105 clean oscillations.</figcaption>
 </figure>
 
 <hr />
 <h2>5. Empirical Results &amp; Telemetry Analysis</h2>
-<p>We evaluate the full experimental telemetry gathered across two independent laboratory sessions. Fig. 2 shows the amplitude decay envelopes and quality factor fits for Dataset 1.</p>
+<p>We evaluate the full experimental telemetry gathered across two independent laboratory sessions. Fig. 3 shows the amplitude decay envelopes and quality factor fits for Dataset 1.</p>
 <h3>5.1 Dataset 1: October 15, 2026 (Nominal Balanced Run)</h3>
 <ul>
-<li><strong>Total Duration:</strong> Pivot 1: $84.57\text{ s}$ ($8,335\text{ samples}$, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$); Pivot 2: $95.38\text{ s}$ ($9,394\text{ samples}$, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$).</li>
+<li><strong>Total Duration:</strong> Pivot 1: $84.57\text{ s}$ (8,335 samples, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$); Pivot 2: $95.38\text{ s}$ (9,394 samples, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$).</li>
 <li><strong>Geometric Constants:</strong> $L = 1.0000 \pm 0.0005\text{ m}$, $h_1 = 0.4300 \pm 0.0010\text{ m}$, $h_2 = 0.5700 \pm 0.0010\text{ m}$, $h_1 - h_2 = -0.1400 \pm 0.0014\text{ m}$.</li>
 </ul>
 <table>
@@ -431,9 +449,15 @@ Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dyna
 <td style="text-align: left;">—</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Initial Amplitude ($\theta_0$)</strong></td>
+<td style="text-align: left;"><strong>Measured Initial Amplitude ($\theta(0)$)</strong></td>
 <td style="text-align: left;">$5.20^\circ$ ($0.0908\text{ rad}$)</td>
 <td style="text-align: left;">$10.16^\circ$ ($0.1773\text{ rad}$)</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Fitted Decay Intercept ($\theta_{0,\text{fit}}$)</strong></td>
+<td style="text-align: left;">$5.14^\circ$ ($0.0897\text{ rad}$)</td>
+<td style="text-align: left;">$9.95^\circ$ ($0.1737\text{ rad}$)</td>
 <td style="text-align: left;">—</td>
 </tr>
 <tr>
@@ -493,27 +517,29 @@ Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dyna
 </tbody>
 </table>
 <h4>Detailed Step-by-Step Bessel Evaluation (Dataset 1)</h4>
-<p>Using corrected periods $T_{1,0} = 1.69042\text{ s}$ and $T_{2,0} = 1.77322\text{ s}$:
-1. Squares of periods:
-   $$T_1^2 = 2.85752\text{ s}^2, \quad T_2^2 = 3.14431\text{ s}^2$$
-2. First denominator term (symmetric):
-   $$\frac{T_1^2 + T_2^2}{L} = \frac{2.85752 + 3.14431}{1.0000} = 6.00183\text{ s}^2/\text{m}$$
-3. Second denominator term (asymmetric):
-   $$\frac{T_1^2 - T_2^2}{h_1 - h_2} = \frac{2.85752 - 3.14431}{-0.1400} = \frac{-0.28679}{-0.1400} = +2.04850\text{ s}^2/\text{m}$$
-4. Denominator sum:
-   $$\text{Den} = 6.00183 + 2.04850 = 8.05033\text{ s}^2/\text{m}$$
-5. Numerator:
-   $$\text{Num} = 8\pi^2 = 8 \times (9.8696044) = 78.95684$$
-6. Gravitational acceleration:
-   $$g = \frac{78.95684}{8.05033} = \mathbf{9.80791\text{ m/s}^2}$$</p>
+<p>Using corrected periods $T_{1,0} = 1.69042\text{ s}$ and $T_{2,0} = 1.77322\text{ s}$:</p>
+<ol>
+<li>Squares of periods:
+   $$T_1^2 = 2.85752\text{ s}^2, \quad T_2^2 = 3.14431\text{ s}^2$$</li>
+<li>First denominator term (symmetric):
+   $$\frac{T_1^2 + T_2^2}{L} = \frac{2.85752 + 3.14431}{1.0000} = 6.00183\text{ s}^2/\text{m}$$</li>
+<li>Second denominator term (asymmetric):
+   $$\frac{T_1^2 - T_2^2}{h_1 - h_2} = \frac{2.85752 - 3.14431}{-0.1400} = \frac{-0.28679}{-0.1400} = +2.04850\text{ s}^2/\text{m}$$</li>
+<li>Denominator sum:
+   $$\text{Den} = 6.00183 + 2.04850 = 8.05033\text{ s}^2/\text{m}$$</li>
+<li>Numerator:
+   $$\text{Num} = 8\pi^2 = 8 \times (9.8696044) = 78.95684$$</li>
+<li>Gravitational acceleration:
+   $$g = \frac{78.95684}{8.05033} = \mathbf{9.80791\text{ m/s}^2}$$</li>
+</ol>
 <figure>
-  <img src="figures/fig2_decay_fits.png" alt="Figure 2: Empirical Amplitude Decay and Exponential Envelopes">
-  <figcaption><strong>Figure 2. Empirical Peak Amplitude Decay and System Quality Factor ($Q$).</strong> Semi-logarithmic and linear decay curves $\theta(n) = \theta_0 e^{-\gamma n}$ for Pivot 1 (blue circles, $\theta_0 = 5.20^\circ$, $\gamma = 0.00461$, $Q = 681.1$) and Pivot 2 (red circles, $\theta_0 = 10.16^\circ$, $\gamma = 0.00523$, $Q = 601.2$) from Dataset 1. Dashed lines denote non-linear least-squares exponential fits confirming linear viscous damping without aerodynamic turbulence transitions.</figcaption>
+  <img src="figures/fig3_decay_fits.png" alt="Figure 3: Empirical Amplitude Decay and Exponential Envelopes">
+  <figcaption><strong>Figure 3. Empirical Peak Amplitude Decay and System Quality Factor ($Q$).</strong> Linear peak amplitude decay curves $\theta(n) = \theta_{0,\text{fit}} e^{-\gamma n}$ for Pivot 1 (blue circles, initial $\theta(0) = 5.20^\circ$, fitted intercept $\theta_{0,\text{fit}} = 5.14^\circ$, $\gamma = 0.00461$, $Q = 681.1$) and Pivot 2 (red circles, initial $\theta(0) = 10.16^\circ$, fitted intercept $\theta_{0,\text{fit}} = 9.95^\circ$, $\gamma = 0.00523$, $Q = 601.2$) from Dataset 1. Dashed green curves denote exponential fits confirming linear viscous damping.</figcaption>
 </figure>
 
 <h3>5.2 Dataset 2: October 17, 2026 (Extended Decay Run)</h3>
 <ul>
-<li><strong>Total Duration:</strong> Pivot 1: $67.34\text{ s}$ ($6,637\text{ samples}$, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$); Pivot 2: $187.59\text{ s}$ ($18,478\text{ samples}$, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$).</li>
+<li><strong>Total Duration:</strong> Pivot 1: $67.34\text{ s}$ (6,637 samples, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$); Pivot 2: $187.59\text{ s}$ (18,478 samples, mean interval $\Delta t = 10.15\text{ ms}$, effective rate $98.5\text{ Hz}$).</li>
 <li><strong>Geometric Constants:</strong> $L = 1.0000 \pm 0.0005\text{ m}$, $h_1 = 0.4300 \pm 0.0010\text{ m}$, $h_2 = 0.5700 \pm 0.0010\text{ m}$, $h_1 - h_2 = -0.1400 \pm 0.0014\text{ m}$.</li>
 </ul>
 <table>
@@ -539,7 +565,13 @@ Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dyna
 <td style="text-align: left;">—</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Initial Amplitude ($\theta_0$)</strong></td>
+<td style="text-align: left;"><strong>Measured Initial Amplitude ($\theta(0)$)</strong></td>
+<td style="text-align: left;">$3.54^\circ$ ($0.0617\text{ rad}$)</td>
+<td style="text-align: left;">$0.96^\circ$ ($0.0167\text{ rad}$)</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Fitted Decay Intercept ($\theta_{0,\text{fit}}$)</strong></td>
 <td style="text-align: left;">$3.54^\circ$ ($0.0617\text{ rad}$)</td>
 <td style="text-align: left;">$0.96^\circ$ ($0.0167\text{ rad}$)</td>
 <td style="text-align: left;">—</td>
@@ -547,7 +579,7 @@ Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dyna
 <tr>
 <td style="text-align: left;"><strong>Final Amplitude ($\theta_f$)</strong></td>
 <td style="text-align: left;">$2.16^\circ$ ($0.0378\text{ rad}$)</td>
-<td style="text-align: left;">$0.58^\circ$ ($0.0101\text{ rad}$)</td>
+<td style="text-align: left;">$0.53^\circ$ ($0.0093\text{ rad}$)</td>
 <td style="text-align: left;">—</td>
 </tr>
 <tr>
@@ -581,7 +613,13 @@ Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dyna
 <td style="text-align: left;">—</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Calculated $g$ (Nominal $d = -0.140\text{ m}$)</strong></td>
+<td style="text-align: left;"><strong>Bessel Uncorrected $g$</strong></td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">—</td>
+<td style="text-align: left;">$9.7104\text{ m/s}^2$</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Bessel Corrected $g$</strong></td>
 <td style="text-align: left;">—</td>
 <td style="text-align: left;">—</td>
 <td style="text-align: left;"><strong>$9.7045 \pm 0.0381\text{ m/s}^2$</strong></td>
@@ -624,7 +662,7 @@ Because $\theta(t)$ was evaluated against arbitrary sensor axes rather than dyna
 <li>$\sigma_{T_1} = \sigma_{\bar{T}_1} = 0.000128\text{ s}$ ($0.128\text{ ms}$, standard error of the mean over 49 cycles).</li>
 <li>$\sigma_{T_2} = \sigma_{\bar{T}_2} = 0.000200\text{ s}$ ($0.200\text{ ms}$, standard error of the mean over 52 cycles).</li>
 <li>$\sigma_D = \pm 0.0005\text{ m}$ ($0.5\text{ mm}$, direct vernier cathetometer reading).</li>
-<li>$\sigma_d = \pm 0.0014\text{ m}$ ($1.4\text{ mm}$, combined in quadrature from individual knife-edge balance line uncertainties $\sigma_{h_1} = \sigma_{h_2} = \pm 1.0\text{ mm}$).</li>
+<li>$\sigma_d = \pm 0.0014\text{ m}$ ($1.4\text{ mm}$, combined in quadrature from individual knife-edge balance line vernier measurements $\sigma_{h_1} = \sigma_{h_2} = \pm 1.0\text{ mm}$).</li>
 </ul>
 <h4>Uncertainty Component Budget</h4>
 <p>$$\begin{aligned}
@@ -700,10 +738,12 @@ u_4(g) &= \left| \frac{\partial g}{\partial d} \right| \sigma_d = 17.826 \times 
 </table>
 <hr />
 <h2>8. Conclusion</h2>
-<p>We have demonstrated an accurate, robust, and automated approach to Kater's pendulum gravimetry by integrating digital inertial telemetry with Bessel's asymmetric formulation. 
-1. <strong>Accuracy &amp; Consistency:</strong> Analysis of laboratory Dataset 1 achieves $g = 9.8079 \pm 0.0264\text{ m/s}^2$ ($\pm 0.27\%$ analytical uncertainty), agreeing with conventional standard gravity $g_0 = 9.80665\text{ m/s}^2$ to $+0.013\%$. Dataset 2 yields $g = 9.7045 \pm 0.0381\text{ m/s}^2$ ($-1.04\%$), illustrating the sensitivity to physical center-of-mass localization when periods are not identical.
-2. <strong>Robustness &amp; Diagnostics:</strong> Engineering post-mortems identified and resolved initial software anomalies: replacing static thresholding with invariant half-swing velocity integration and median filtering prevented low-amplitude cycle skipping.
-3. <strong>Pedagogical &amp; Metrological Value:</strong> The digital telemetry pipeline eliminates human timing bias, extracts comprehensive damping parameters ($Q \approx 600\text{--}680$), and demonstrates how Bessel's asymmetric formulation suppresses center-of-mass balance uncertainty by a factor of $4\times$, providing an open, reproducible framework for precision measurement in experimental physics.</p>
+<p>We have demonstrated an accurate, robust, and automated approach to Kater's pendulum gravimetry by integrating digital inertial telemetry with Bessel's asymmetric formulation.</p>
+<ol>
+<li><strong>Accuracy &amp; Consistency:</strong> Analysis of laboratory Dataset 1 achieves $g = 9.8079 \pm 0.0264\text{ m/s}^2$ ($\pm 0.27\%$ analytical uncertainty), agreeing with conventional standard gravity $g_0 = 9.80665\text{ m/s}^2$ to $+0.013\%$. Dataset 2 yields $g = 9.7045 \pm 0.0381\text{ m/s}^2$ ($-1.04\%$), illustrating the sensitivity to physical center-of-mass localization when periods are not identical.</li>
+<li><strong>Robustness &amp; Diagnostics:</strong> Engineering post-mortems identified and resolved initial software anomalies: replacing static thresholding with invariant half-swing velocity integration and median filtering prevented low-amplitude cycle skipping.</li>
+<li><strong>Pedagogical &amp; Metrological Value:</strong> The digital telemetry pipeline eliminates human timing bias, extracts comprehensive damping parameters ($Q \approx 235\text{--}681$ across all experimental configurations, with $Q \approx 600\text{--}680$ under nominal balanced conditions in Dataset 1), and demonstrates how Bessel's asymmetric formulation suppresses center-of-mass balance uncertainty by a factor of $4\times$, providing an open, reproducible framework for precision measurement in experimental physics.</li>
+</ol>
 <hr />
 <h2>References</h2>
 <ol>
