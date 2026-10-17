@@ -211,6 +211,41 @@ ol:last-of-type li {
     margin-bottom: 2mm;
     text-align: left;
 }
+
+/* Publication Figures */
+figure {
+    margin: 5mm auto;
+    text-align: center;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figure img {
+    max-width: 95%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border: 0.5pt solid #bbb;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+figcaption {
+    font-size: 8.5pt;
+    line-height: 1.35;
+    color: #222;
+    margin-top: 2.5mm;
+    margin-bottom: 3.5mm;
+    text-align: justify;
+    padding: 0 4mm;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+figcaption strong {
+    font-size: 9pt;
+    color: #000;
+}
 """
 
 html_full = f"""<!DOCTYPE html>

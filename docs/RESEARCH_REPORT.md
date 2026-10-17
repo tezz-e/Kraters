@@ -168,6 +168,11 @@ $$t_{\text{zero}} = t_{k-1} - \omega_{k-1} \frac{t_k - t_{k-1}}{\omega_k - \omeg
 
 By taking the difference between alternate crossings of identical direction (\(\text{left} \to \text{right}\)), we obtain the full period \(T_{\text{meas}} = t_{\text{zero}, i} - t_{\text{zero}, i-2}\). This eliminates systemic bias caused by any minute residual DC offsets in the gyroscope output.
 
+<figure>
+  <img src="figures/fig1_waveforms.png" alt="Figure 1: Empirical Kinematic Telemetry Waveforms">
+  <figcaption><strong>Figure 1. Empirical Kinematic Waveforms from Laboratory Telemetry.</strong> (a) Direct angular rate \(\omega_z(t)\) measured across a \(40\text{ s}\) window under Pivot 1. Red circles highlight sub-sample zero-crossing turning points extracted to determine individual half-periods. (b) Simultaneous tri-axial linear acceleration telemetry (\(a_x, a_y, a_z\)) recorded by the onboard MPU-6050 IMU, showing centripetal acceleration modulation along the rod axis (\(a_y\)) at twice the fundamental swing frequency.</figcaption>
+</figure>
+
 ---
 
 ## 4. Software Signal Processing & Post-Mortem Diagnostics
@@ -238,6 +243,11 @@ Because \(\theta(t)\) was evaluated against arbitrary sensor axes rather than dy
    $$\theta_0 = \frac{1}{2} \int_{t_{k-1}}^{t_k} |\omega_z(t)| \, dt \tag{9}$$
    Because the integral of angular speed between turning points (\(\omega = 0\)) is mathematically equal to the peak-to-peak swing sweep, dividing by \(2\) produces the true amplitude independent of any accelerometer DC tilt.
 
+<figure>
+  <img src="figures/fig3_post_mortem_diagnostics.png" alt="Figure 3: Software Post-Mortem Diagnostics">
+  <figcaption><strong>Figure 3. Software Diagnostic Post-Mortems for Live Laboratory Anomalies.</strong> (a) Decay scatter bifurcation artifact: static frame projection of equilibrium mounting tilt (\(\theta_{\text{DC}} \approx 11.7^\circ\)) causes alternating peak splitting (red/blue markers), resolved by half-swing angular velocity integration (dashed green curve). (b) Low-amplitude tail threshold failure in Dataset 2: at \(t > 150\text{ s}\), swing speed dipped below the fixed \(3.0^\circ/\text{s}\) gate, resulting in skipped cycles (\(3.55\text{ s}\) and \(5.32\text{ s}\)) that artificially inflated \(\bar{T}_2\) and collapsed \(g\) to \(4.81\text{ m/s}^2\). Re-processing with an adaptive \(0.8^\circ/\text{s}\) gate and median filter recovered all 105 valid oscillations.</figcaption>
+</figure>
+
 ---
 
 ## 5. Empirical Results & Telemetry Analysis
@@ -277,6 +287,11 @@ Using corrected periods \(T_{1,0} = 1.69042\text{ s}\) and \(T_{2,0} = 1.77322\t
    $$\text{Num} = 8\pi^2 = 8 \times (9.8696044) = 78.95684$$
 6. Gravitational acceleration:
    $$g = \frac{78.95684}{8.05033} = \mathbf{9.80791\text{ m/s}^2}$$
+
+<figure>
+  <img src="figures/fig2_decay_fits.png" alt="Figure 2: Empirical Amplitude Decay and Exponential Envelopes">
+  <figcaption><strong>Figure 2. Empirical Peak Amplitude Decay and System Quality Factor (\(Q\)).</strong> Semi-logarithmic and linear decay curves \(\theta(n) = \theta_0 e^{-\gamma n}\) for Pivot 1 (blue circles, \(\theta_0 = 5.20^\circ\), \(\gamma = 0.00461\), \(Q = 681.1\)) and Pivot 2 (red circles, \(\theta_0 = 10.16^\circ\), \(\gamma = 0.00523\), \(Q = 601.2\)) from Dataset 1. Dashed lines denote nonlinear least-squares exponential fits confirming linear viscous damping regime without turbulent aerodynamic transitions.</figcaption>
+</figure>
 
 ### 5.2 Dataset 2: October 17, 2026 (Extended Decay Run)
 * **Total Duration:** Pivot 1: \(65.50\text{ s}\) (\(6,550\text{ samples}\)); Pivot 2: \(187.59\text{ s}\) (\(18,478\text{ samples}\)).
@@ -363,6 +378,11 @@ A physical shift of the center of mass balance point by just \(\Delta d = -0.005
 $$g = 9.7045 - 18.397 \times (-0.0055) = \mathbf{9.8057\text{ m/s}^2} \quad (\mathbf{0.01\%} \text{ error})$$
 
 This demonstrates that the \(1\%\) discrepancy in Dataset 2 was dominated entirely by a millimeter-scale shift in pencil line alignment for the center of mass when resetting the physical bobs, confirming the underlying stability of the digital timing engine.
+
+<figure>
+  <img src="figures/fig4_phase_space_and_bessel_sensitivity.png" alt="Figure 4: Phase Space Dynamics and Bessel Error Attenuation">
+  <figcaption><strong>Figure 4. Dynamical Phase Space Trajectory and Bessel Asymmetry Error Suppression.</strong> (a) Empirical phase portrait \(\{\theta(t), \omega_z(t)\}\) reconstructed via numerical velocity integration over a \(30\text{ s}\) interval, demonstrating clean, closed spiral orbits indicative of low-dissipation harmonic motion. (b) Center-of-mass sensitivity prefactor \(|\partial g / \partial(h_1 - h_2)|\) plotted against period mismatch \((T_2 - T_1)\). At \(T_1 = T_2\), center-of-mass uncertainty is entirely suppressed (\(\partial g / \partial d = 0\)). In our experiment (\(\Delta T = 0.083\text{ s}\), black star), error sensitivity is attenuated by more than a factor of \(20\), validating Bessel's formulation.</figcaption>
+</figure>
 
 ---
 
