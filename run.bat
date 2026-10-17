@@ -37,6 +37,9 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo [OK] All dependencies are ready!
+echo [TIP] If ESP8266 COM port is not recognized, run:
+echo       drivers\CH340_2014_Driver\install_driver.bat
+echo.
 echo [..] Launching Kater's Pendulum Application...
 echo.
 

@@ -155,10 +155,22 @@ In the lab, the pendulum rod has two clamping collars with triangular steel wedg
 
 ---
 
+### ⚠️ Crucial: 2014 CH340 Driver Included!
+The NodeMCU ESP8266 board uses a CH340 USB-to-Serial chip. Newer Windows 10/11 default/2024 drivers often break or fail with clone chips. **This board requires the specific 2014 legacy driver (`v3.4.2014.08`), which is included directly in this project!**
+
+* **If the ESP8266 COM port does not appear in the app:**
+  1. In the app on Screen 1, click **`📦 Install 2014 Driver`** (or double-click `drivers\CH340_2014_Driver\install_driver.bat`).
+  2. Click **Yes** when Windows asks for Administrator privileges.
+  3. **Unplug and re-plug the ESP8266 USB cable.**
+  4. Click **"Refresh Ports"** in the app $\rightarrow$ the COM port (`COM13` or similar) will appear immediately!
+
+---
+
 ## 4. In-App Step-by-Step Lab Procedure
 
 ### Step 1: Screen 1 — Setup Page
-1. **COM Port:** Select your port (usually `COM13` or the available CH340 port) and click **"Connect"**.
+1. **COM Port:** Select your port (usually `COM13` or the detected CH340 port) and click **"Connect"**.  
+   *(If not visible, click **"📦 Install 2014 Driver"**, replug USB, and click "Refresh Ports").*
 2. **Experiment Geometry & Parameters:**
    * **Knife-edge distance ($L$):** Set to `1.0000 m` (or measure your exact blade-to-blade spacing).
    * **$h_1$ (Pivot 1 to CoM):** Set to `0.4300 m` (or your measured value).
@@ -211,6 +223,7 @@ In the lab, the pendulum rod has two clamping collars with triangular steel wedg
 
 | Problem | Cause | Quick Fix |
 | :--- | :--- | :--- |
+| ESP COM port does not appear in dropdown | Missing driver or incompatible 2024 Windows driver update | Click **"📦 Install 2014 Driver"** on Screen 1 (or run `drivers\CH340_2014_Driver\install_driver.bat`), replug the USB cable, and click *Refresh Ports*. |
 | Status says *Connection failed* | Wrong COM port or USB cable unplugged | Click *Refresh Ports*, select the CH340 COM port, click *Connect*. |
 | Amber warning badge on Setup screen: *h1 + h2 != L* | Distances measured from rod ends instead of knife edges | Measure strictly from the sharp blade line of Knife Edge 1 and Knife Edge 2 to the pencil balance line. |
 | Calculated $g$ is showing $\approx 19.9\text{ m/s}^2$ | Sign of $(h_1 - h_2)$ was entered as positive `+0.14` | Change it to **`-0.1400`** in the recalculate box and click *Recalculate g*. $(h_1 - h_2)$ must be negative because Pivot 1 is closer to the heavy bob. |

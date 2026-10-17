@@ -1,5 +1,6 @@
 """Setup page: COM port, parameters, connection test."""
 
+import os
 from PyQt5 import QtWidgets, QtCore
 import serial.tools.list_ports
 
@@ -36,6 +37,11 @@ class SetupPage(QtWidgets.QWidget):
         refresh_btn = QtWidgets.QPushButton("Refresh Ports")
         refresh_btn.clicked.connect(self.refresh_ports)
         conn_layout.addWidget(refresh_btn)
+
+        self.driver_btn = QtWidgets.QPushButton("📦 Install 2014 Driver")
+        self.driver_btn.setToolTip("Install the working 2014 CH340 legacy driver if ESP is not recognized")
+        self.driver_btn.clicked.connect(self._run_driver_installer)
+        conn_layout.addWidget(self.driver_btn)
 
         self.connect_btn = QtWidgets.QPushButton("Connect")
         self.connect_btn.setStyleSheet("font-weight: bold; padding: 6px 16px;")
@@ -189,3 +195,21 @@ class SetupPage(QtWidgets.QWidget):
             'h1_minus_h2': h if abs(h) > 1e-5 else None,
             'g_accepted': self.g_input.value(),
         }
+
+    def _run_driver_installer(self):
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        proj_root = os.path.dirname(base_dir)
+        bat_path = os.path.join(proj_root, "drivers", "CH340_2014_Driver", "install_driver.bat")
+        if not os.path.exists(bat_path):
+            bat_path = os.path.join(base_dir, "drivers", "CH340_2014_Driver", "install_driver.bat")
+
+        if os.path.exists(bat_path):
+            try:
+                os.startfile(bat_path)
+            except Exception as e:
+                QtWidgets.QMessageBox.warning(self, "Driver Installer", f"Could not launch installer:\n{e}")
+        else:
+            QtWidgets.QMessageBox.information(
+                self, "Driver Location",
+                f"Driver installer file not found at:\n{bat_path}\n\nPlease check the 'drivers' folder in the project."
+            )
