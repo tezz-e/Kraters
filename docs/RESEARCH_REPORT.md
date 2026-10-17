@@ -324,30 +324,30 @@ $$\sigma_g = \sqrt{ \left(\frac{\partial g}{\partial T_1} \sigma_{T_1}\right)^2 
 ### 6.1 Sensitivity Coefficients & Uncertainty Breakdown (Dataset 1)
 Using empirical values from Dataset 1 (\(T_1 = 1.69042\text{ s}\), \(T_2 = 1.77322\text{ s}\), \(D = 1.000\text{ m}\), \(d = -0.140\text{ m}\), \(g = 9.8079\text{ m/s}^2\), \(\Phi = 8.0503\)):
 
-* **Partial Derivatives:**
-  $$\begin{aligned}
-  \frac{\partial g}{\partial T_1} &= +25.302\text{ m}\cdot\text{s}^{-3} \\
-  \frac{\partial g}{\partial T_2} &= -35.183\text{ m}\cdot\text{s}^{-3} \\
-  \frac{\partial g}{\partial D} &= +7.312\text{ s}^{-2} \\
-  \frac{\partial g}{\partial d} &= -17.826\text{ s}^{-2}
-  \end{aligned}$$
+#### Partial Derivatives
+$$\begin{aligned}
+\frac{\partial g}{\partial T_1} &= +25.302\text{ m}\cdot\text{s}^{-3} \\
+\frac{\partial g}{\partial T_2} &= -35.183\text{ m}\cdot\text{s}^{-3} \\
+\frac{\partial g}{\partial D} &= +7.312\text{ s}^{-2} \\
+\frac{\partial g}{\partial d} &= -17.826\text{ s}^{-2}
+\end{aligned}$$
 
-* **Assigned Measurement Uncertainties:**
-  * \(\sigma_{T_1} = \sigma_{\bar{T}_1} = 0.000128\text{ s}\) (\(0.128\text{ ms}\), standard error of the mean over 49 cycles).
-  * \(\sigma_{T_2} = \sigma_{\bar{T}_2} = 0.000200\text{ s}\) (\(0.200\text{ ms}\), standard error of the mean over 52 cycles).
-  * \(\sigma_D = \pm 0.0005\text{ m}\) (\(0.5\text{ mm}\), direct vernier cathetometer reading).
-  * \(\sigma_d = \pm 0.0010\text{ m}\) (\(1.0\text{ mm}\), knife-edge balance line uncertainty).
+#### Assigned Measurement Uncertainties
+* \(\sigma_{T_1} = \sigma_{\bar{T}_1} = 0.000128\text{ s}\) (\(0.128\text{ ms}\), standard error of the mean over 49 cycles).
+* \(\sigma_{T_2} = \sigma_{\bar{T}_2} = 0.000200\text{ s}\) (\(0.200\text{ ms}\), standard error of the mean over 52 cycles).
+* \(\sigma_D = \pm 0.0005\text{ m}\) (\(0.5\text{ mm}\), direct vernier cathetometer reading).
+* \(\sigma_d = \pm 0.0010\text{ m}\) (\(1.0\text{ mm}\), knife-edge balance line uncertainty).
 
-* **Uncertainty Component Budget:**
-  $$\begin{aligned}
-  u_1(g) &= \left| \frac{\partial g}{\partial T_1} \right| \sigma_{T_1} = 25.302 \times 0.000128 = 0.00324\text{ m/s}^2 \\
-  u_2(g) &= \left| \frac{\partial g}{\partial T_2} \right| \sigma_{T_2} = 35.183 \times 0.000200 = 0.00704\text{ m/s}^2 \\
-  u_3(g) &= \left| \frac{\partial g}{\partial D} \right| \sigma_D = 7.312 \times 0.0005 = 0.00366\text{ m/s}^2 \\
-  u_4(g) &= \left| \frac{\partial g}{\partial d} \right| \sigma_d = 17.826 \times 0.0010 = 0.01783\text{ m/s}^2
-  \end{aligned}$$
+#### Uncertainty Component Budget
+$$\begin{aligned}
+u_1(g) &= \left| \frac{\partial g}{\partial T_1} \right| \sigma_{T_1} = 25.302 \times 0.000128 = 0.00324\text{ m/s}^2 \\
+u_2(g) &= \left| \frac{\partial g}{\partial T_2} \right| \sigma_{T_2} = 35.183 \times 0.000200 = 0.00704\text{ m/s}^2 \\
+u_3(g) &= \left| \frac{\partial g}{\partial D} \right| \sigma_D = 7.312 \times 0.0005 = 0.00366\text{ m/s}^2 \\
+u_4(g) &= \left| \frac{\partial g}{\partial d} \right| \sigma_d = 17.826 \times 0.0010 = 0.01783\text{ m/s}^2
+\end{aligned}$$
 
-* **Total Combined Uncertainty:**
-  $$\sigma_g = \sqrt{ (0.00324)^2 + (0.00704)^2 + (0.00366)^2 + (0.01783)^2 } = \mathbf{0.0198\text{ m/s}^2}$$
+#### Total Combined Uncertainty
+$$\sigma_g = \sqrt{ (0.00324)^2 + (0.00704)^2 + (0.00366)^2 + (0.01783)^2 } = \mathbf{0.0198\text{ m/s}^2}$$
 
 $$\mathbf{g_{\text{Dataset 1}} = 9.808 \pm 0.020\text{ m/s}^2 \quad (\pm 0.20\%) }$$
 
