@@ -168,12 +168,12 @@ ax1.legend(loc='center right')
 cycles = np.arange(1, len(periods_bad) + 1)
 ax2.plot(cycles[:-2], periods_bad[:-2], 'bs-', markersize=5, label=f'Clean Oscillations ($T_2 = 1.7718\\ \\mathrm{{s}}$)')
 ax2.plot(cycles[-2:], periods_bad[-2:], 'r^--', markersize=7, linewidth=1.5,
-         label=r'Missed Cycles ($\omega_{\mathrm{peak}} < 3^\circ/\mathrm{s}$)' + '\n' +
+         label=r'Missed Cycles ($\omega_{\mathrm{peak}} < 3^\circ/\mathrm{s}$ at cycle $\sim 23$)' + '\n' +
                r'$3.55\ \mathrm{s}$ (2×) & $5.32\ \mathrm{s}$ (3×)' + '\n' +
                r'$\rightarrow \bar{T}_2 = 2.038\ \mathrm{s} \rightarrow g = 4.81\ \mathrm{m/s}^2$')
 ax2.axhline(1.7718, color='green', linestyle=':', label='True Median Period ($1.7718\\ \\mathrm{s}$)')
 ax2.set_title(r'(b) Artifact 2: Low-Amplitude Tail Skips ($g = 4.81\ \mathrm{m/s}^2$ Root Cause)')
-ax2.set_xlabel('Recorded Cycle Number')
+ax2.set_xlabel('Recorded Period Entry Index')
 ax2.set_ylabel('Measured Period $T_2$ [s]')
 ax2.set_ylim(1.5, 5.8)
 ax2.grid(True)
