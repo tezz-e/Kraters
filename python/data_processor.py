@@ -52,7 +52,7 @@ class DataProcessor:
                  gyro_in_deg: bool = True,
                  comp_alpha: float = 0.98,
                  lpf_alpha: float = 0.25,
-                 min_peak_omega_deg: float = 3.0,
+                 min_peak_omega_deg: float = 0.8,
                  min_half_period: float = 0.35,
                  on_swing: Optional[Callable] = None,
                  on_period: Optional[Callable] = None,
@@ -321,7 +321,10 @@ class DataProcessor:
         if direction == 'right':
             if self._last_pos_crossing is not None:
                 T = t_zero - self._last_pos_crossing.timestamp
-                if T > 2.0 * self.min_half_period:
+                # Sanity check: a 1-meter Kater's pendulum period is ~1.5 - 2.1 s.
+                # If T > 2.6 s, a zero crossing was missed (e.g. at low amplitude).
+                # Ignore skipped cycles so they don't corrupt the period measurement!
+                if 2.0 * self.min_half_period < T < 2.6:
                     self._record_gyro_period(T, self._last_pos_crossing, swing)
             self._last_pos_crossing = swing
         else:
@@ -455,20 +458,32 @@ class DataProcessor:
     # ── Aggregate Getters ────────────────────────────────────────────
 
     def get_mean_period(self, method: Method, last_n: int = 10, corrected: bool = True):
-        """Return (mean, std) of the last N periods for a method (raw or corrected)."""
+        """Return (mean, std) of the last N periods for a method (raw or corrected), rejecting outliers."""
         periods = self.periods_gyro if method == Method.GYRO else self.periods_ir
         if not periods:
             return None, None
         recent = periods[-last_n:]
         T_vals = np.array([p.T_corrected if corrected else p.T_measured for p in recent])
+        if len(T_vals) >= 3:
+            med = float(np.median(T_vals))
+            # Reject missed zero crossings (e.g. 2x, 3x period) and glitches (> 18% from median)
+            valid = T_vals[np.abs(T_vals - med) / max(med, 1e-6) < 0.18]
+            if len(valid) > 0:
+                return float(np.mean(valid)), float(np.std(valid))
         return float(np.mean(T_vals)), float(np.std(T_vals))
 
     def get_all_periods(self, method: Method):
-        """Return array of all corrected periods for a method."""
+        """Return array of all corrected periods for a method, filtering outliers."""
         periods = self.periods_gyro if method == Method.GYRO else self.periods_ir
         if not periods:
             return np.array([])
-        return np.array([p.T_corrected for p in periods])
+        T_vals = np.array([p.T_corrected for p in periods])
+        if len(T_vals) >= 3:
+            med = float(np.median(T_vals))
+            valid = T_vals[np.abs(T_vals - med) / max(med, 1e-6) < 0.18]
+            if len(valid) > 0:
+                return valid
+        return T_vals
 
     def get_decay_data(self):
         """Return (cycle_numbers, amplitudes_deg) where cycle_numbers is in FULL cycles."""

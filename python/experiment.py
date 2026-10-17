@@ -91,8 +91,9 @@ class Experiment:
             result.T_gyro_mean = T_gyro_raw
             result.T_gyro_std = T_gyro_raw_std
             result.T_gyro_corrected = T_gyro_corr if T_gyro_corr is not None else T_gyro_raw
-            result.n_oscillations_gyro = len(processor.periods_gyro)
-            result.periods_gyro_all = [p.T_corrected for p in processor.periods_gyro]
+            valid_periods = processor.get_all_periods(Method.GYRO)
+            result.n_oscillations_gyro = len(valid_periods)
+            result.periods_gyro_all = [float(x) for x in valid_periods]
 
         # IR periods
         T_ir_raw, T_ir_raw_std = processor.get_mean_period(Method.IR, last_n=999, corrected=False)
