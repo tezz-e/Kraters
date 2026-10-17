@@ -211,6 +211,8 @@ class TrialPage(QtWidgets.QWidget):
         self.pendulum.reset_trail()
         self.angle_buf[:] = 0
         self.gyro_buf[:] = 0
+        self.decay_scatter.clear()
+        self.decay_fit.clear()
         self._gyro_crossing_positions.clear()
         self._ir_crossing_positions.clear()
         self._sample_count = 0
@@ -377,7 +379,17 @@ class TrialPage(QtWidgets.QWidget):
         if T_ir:
             self.lbl_T_ir.setText(f"T (IR): {T_ir:.5f} s")
 
-        # Decay scatter
+        # Decay scatter & live exponential fit curve
         sn, sa = self.processor.get_decay_data()
         if len(sn) > 0:
             self.decay_scatter.setData(sn, sa)
+            if len(sa) >= 6:
+                try:
+                    from pendulum_physics import fit_decay
+                    theta0, gamma, _ = fit_decay(sn, sa)
+                    if theta0 > 0 and 0.00001 < gamma < 0.2:
+                        curve_x = np.linspace(sn[0], sn[-1], 80)
+                        curve_y = theta0 * np.exp(-gamma * curve_x)
+                        self.decay_fit.setData(curve_x, curve_y)
+                except Exception:
+                    pass

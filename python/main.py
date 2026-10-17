@@ -166,7 +166,11 @@ class MainWindow(QtWidgets.QMainWindow):
             proc, "Pivot 1", data.get('manual_T'), data.get('manual_N'))
         # Prepare pivot 2
         dominant = getattr(self.reader, 'dominant_axis', 'az') if self.reader else 'az'
-        a_rest_val = self.reader.a_rest if (self.reader and self.reader.a_rest) else 1.0
+        # Invert resting rod gravity because the physical rod is inverted 180° for Pivot 2
+        if self.reader and self.reader.a_rest is not None:
+            a_rest_val = -self.reader.a_rest
+        else:
+            a_rest_val = 1.0
         a_perp_val = getattr(self.reader, 'a_perp_rest', 0.0) if self.reader else 0.0
 
         if self.trial2_page.orient_combo.currentData() == "auto":
@@ -185,9 +189,9 @@ class MainWindow(QtWidgets.QMainWindow):
         proc2.set_rest_calibration(a_rest_val, a_perp_val)
         self.trial2_page.processor = proc2
         self._current_processor = proc2
-        self.trial2_page.start_btn.setEnabled(False)
-        self.trial2_page.lbl_status.setText("Status: Invert Pendulum & Calibrate Zero")
-        self.trial2_page.lbl_status.setStyleSheet("font-size: 14px; font-weight: bold; color: #ffaa00; padding: 4px 8px; background: #1c1c30; border-radius: 4px;")
+        self.trial2_page.start_btn.setEnabled(True)
+        self.trial2_page.lbl_status.setText("Status: Invert Pendulum — Ready to Record")
+        self.trial2_page.lbl_status.setStyleSheet("font-size: 14px; font-weight: bold; color: #00ff88; padding: 4px 8px; background: #1c1c30; border-radius: 4px;")
         self.stack.setCurrentIndex(2)
 
     def _trial2_redo(self):
