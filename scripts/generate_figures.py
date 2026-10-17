@@ -245,7 +245,7 @@ sensitivity = np.abs((8.0 * np.pi**2 / den**2) * (T1_nom**2 - T2_range**2) / (d_
 
 ax2.plot(delta_T, sensitivity, color='#d62728', linewidth=1.8, label=r'$|\partial g / \partial (h_1 - h_2)|$ Sensitivity')
 ax2.axvline(0, color='gray', linestyle='--', label=r'Equal Period ($T_1 = T_2 \to \partial g/\partial d = 0$)')
-ax2.plot(1.7732 - 1.6904, 17.826, 'k*', markersize=10, label=r'Our Experiment: $\Delta T = 0.083\ \mathrm{s}$' + '\n(Sensitivity suppressed by 20×)')
+ax2.plot(1.7732 - 1.6904, 17.826, 'k*', markersize=10, label=r'Our Experiment: $\Delta T = 0.083\ \mathrm{s}$' + '\n' + r'(Attenuation factor $\approx 4\times$)')
 ax2.set_title(r'(b) Bessel Error Mitigation: $\frac{\partial g}{\partial(h_1 - h_2)}$ vs $(T_2 - T_1)$')
 ax2.set_xlabel(r'Period Difference $(T_2 - T_1)$ [s]')
 ax2.set_ylabel(r'Center-of-Mass Error Multiplier $[\mathrm{s}^{-2}]$')
