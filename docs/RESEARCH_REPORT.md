@@ -106,11 +106,11 @@ $$\delta = \ln\left(\frac{\theta(n)}{\theta(n+1)}\right) = \gamma, \quad Q = \fr
 ## 3. Experimental Apparatus & Digital Telemetry Architecture
 
 ### 3.1 Physical Pendulum Construction
-The physical apparatus consists of a precision cold-rolled rectangular steel rod (nominal total length \(1.20\text{ m}\), cross-section \(12\text{ mm} \times 12\text{ mm}\)) equipped with:
+The physical apparatus consists of a precision cold-rolled rectangular steel rod (nominal total length 1.20 m, cross-section 12 mm × 12 mm) equipped with:
 1. **Knife Edges \(K_1\) and \(K_2\):** Hardened carbon steel triangular wedge knife edges facing inward toward each other, securely clamped at an exact separation of \(L = 1.0000 \pm 0.0005\text{ m}\).
 2. **Asymmetric Cylindrical Bobs:**
-   * Heavy Bob (\(\approx 1.5\text{ kg}\)) fixed permanently adjacent to Knife Edge 1.
-   * Light Bob (\(\approx 0.5\text{ kg}\)) mounted near Knife Edge 2.
+   * Heavy Bob (≈ 1.5 kg) fixed permanently adjacent to Knife Edge 1.
+   * Light Bob (≈ 0.5 kg) mounted near Knife Edge 2.
 3. **Center of Mass Determination:** The center of mass of the assembled rod was determined by horizontal knife-edge balance balancing, establishing:
    * \(h_1 = 0.4300 \pm 0.0010\text{ m}\) (Knife Edge 1 to CoM)
    * \(h_2 = 0.5700 \pm 0.0010\text{ m}\) (Knife Edge 2 to CoM)

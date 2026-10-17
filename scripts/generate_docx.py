@@ -29,15 +29,13 @@ transform = ET.XSLT(xslt_doc)
 def latex_to_omml(latex_str):
     """Convert LaTeX string to Word OMML element."""
     try:
-        # Clean latex string
         cleaned = latex_str.strip()
         # Remove tag if present
         cleaned = re.sub(r'\\tag\{.*?\}', '', cleaned).strip()
-        # Replace common unsupported environments
-        cleaned = re.sub(r'\\begin\{aligned\}', '', cleaned)
-        cleaned = re.sub(r'\\end\{aligned\}', '', cleaned)
+        # Remove alignment environments
+        cleaned = re.sub(r'\\begin\{aligned\}|\\end\{aligned\}', '', cleaned).strip()
+        cleaned = cleaned.replace('&', '').strip()
         cleaned = cleaned.replace(r'\implies', r'\rightarrow')
-        cleaned = cleaned.replace(r'\text{', r'\mathrm{')
         
         mml = latex2mathml.converter.convert(cleaned)
         mml_root = ET.fromstring(mml)
@@ -46,6 +44,32 @@ def latex_to_omml(latex_str):
         return parse_xml(omml_xml_str)
     except Exception as e:
         return None
+
+def convert_display_equation(raw_math):
+    """Convert a display math block (including multi-line / aligned) into a list of tuples:
+    [(omml_element, fallback_text, tag_str), ...]
+    """
+    tag_match = re.search(r'\\tag\{(\d+)\}', raw_math)
+    tag_str = f"({tag_match.group(1)})" if tag_match else None
+    
+    cleaned = re.sub(r'\\tag\{.*?\}', '', raw_math).strip()
+    cleaned = re.sub(r'\\begin\{aligned\}|\\end\{aligned\}', '', cleaned).strip()
+    
+    # Check if multi-line (contains \\)
+    if r'\\' in cleaned:
+        sub_lines = [l.strip() for l in cleaned.split(r'\\')]
+        results = []
+        valid_lines = [l for l in sub_lines if l.strip()]
+        for idx, sub_line in enumerate(valid_lines):
+            sub_line_clean = sub_line.replace('&', '').strip()
+            omml_el = latex_to_omml(sub_line_clean)
+            sub_tag = tag_str if (idx == len(valid_lines) - 1) else None
+            results.append((omml_el, sub_line_clean, sub_tag))
+        return results
+    else:
+        cleaned_single = cleaned.replace('&', '').strip()
+        omml_el = latex_to_omml(cleaned_single)
+        return [(omml_el, cleaned_single, tag_str)]
 
 def set_cell_margins(cell, top=100, bottom=100, left=150, right=150):
     """Set inner cell padding in twips (1 pt = 20 twips)."""
@@ -79,45 +103,48 @@ def set_table_borders(table):
     )
     tblPr.append(tblBorders)
 
-def add_formatted_text(p, text):
-    """Parse inline bold, italic, code, and inline math into runs."""
-    # Pattern to match:
-    # 1. Inline math: $...$ or \(...\)
-    # 2. Bold: **...**
-    # 3. Italic: *...*
-    # 4. Inline code: `...`
+def add_formatted_text(p, text, is_bold=False, is_italic=False):
+    """Parse inline bold, italic, code, and inline math into runs with arbitrary nesting."""
     token_pattern = re.compile(
-        r'(\$\$.*?\$\$|\\\[.*?\\\]|\\\(.*?\\\)|(?<!\$)\$(?!\$).*?(?<!\$)\$(?!\$)|'
-        r'\*\*.*?\*\*|\*.*?\*|`.*?`)'
+        r'(\\\(.*?\\\)|\$(?!\$)[^\$]+?\$(?!\$)|\*\*.*?\*\*|(?<!\*)\*[^\*]+?\*(?!\*)|`.*?`)'
     )
     tokens = token_pattern.split(text)
     for tok in tokens:
         if not tok:
             continue
-        if (tok.startswith('$') and tok.endswith('$')) or (tok.startswith(r'\(') and tok.endswith(r'\)')):
-            # Inline math
-            math_content = tok.strip('$')
-            if math_content.startswith(r'\(') and math_content.endswith(r'\)'):
-                math_content = math_content[2:-2]
+        if tok.startswith(r'\(') and tok.endswith(r'\)'):
+            math_content = tok[2:-2]
             omml_el = latex_to_omml(math_content)
             if omml_el is not None:
                 p._p.append(omml_el)
             else:
                 run = p.add_run(math_content)
                 run.italic = True
+                run.bold = is_bold
+        elif tok.startswith('$') and tok.endswith('$'):
+            math_content = tok[1:-1]
+            omml_el = latex_to_omml(math_content)
+            if omml_el is not None:
+                p._p.append(omml_el)
+            else:
+                run = p.add_run(math_content)
+                run.italic = True
+                run.bold = is_bold
         elif tok.startswith('**') and tok.endswith('**'):
-            run = p.add_run(tok[2:-2])
-            run.bold = True
+            inner = tok[2:-2]
+            add_formatted_text(p, inner, is_bold=True, is_italic=is_italic)
         elif tok.startswith('*') and tok.endswith('*'):
-            run = p.add_run(tok[1:-1])
-            run.italic = True
+            inner = tok[1:-1]
+            add_formatted_text(p, inner, is_bold=is_bold, is_italic=True)
         elif tok.startswith('`') and tok.endswith('`'):
             run = p.add_run(tok[1:-1])
             run.font.name = 'Consolas'
             run.font.size = Pt(9.5)
             run.font.color.rgb = RGBColor(40, 40, 40)
         else:
-            p.add_run(tok)
+            run = p.add_run(tok)
+            run.bold = is_bold
+            run.italic = is_italic
 
 def generate_docx():
     print(f"[1/4] Reading {INPUT_MD}...")
@@ -220,8 +247,6 @@ def generate_docx():
 
                     if cap_match:
                         raw_caption = cap_match.group(1).strip()
-                        # Clean html tags for runs
-                        clean_caption = re.sub(r'</?(strong|b|em|i)>', '', raw_caption)
                         p_cap = doc.add_paragraph()
                         p_cap.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
                         p_cap.paragraph_format.left_indent = Inches(0.25)
@@ -229,17 +254,23 @@ def generate_docx():
                         p_cap.paragraph_format.space_before = Pt(2)
                         p_cap.paragraph_format.space_after = Pt(10)
                         
-                        # Add bold label if starts with Figure X.
-                        fig_prefix = re.match(r'^(Figure\s+\d+\.[^:]*:?|\*\*[^*]+\*\*|\s*Figure\s+\d+\.)', clean_caption)
-                        if fig_prefix:
-                            pref = fig_prefix.group(0)
-                            r_pref = p_cap.add_run(pref + " ")
-                            r_pref.bold = True
-                            r_pref.font.size = Pt(9.5)
-                            rem_text = clean_caption[len(pref):].strip()
+                        strong_m = re.search(r'<(?:strong|b)>(.*?)</(?:strong|b)>', raw_caption)
+                        if strong_m:
+                            pref = strong_m.group(1).strip()
+                            add_formatted_text(p_cap, pref + " ", is_bold=True)
+                            rem_text = raw_caption[strong_m.end():].strip()
+                            rem_text = re.sub(r'</?(?:em|i|span|p)>', '', rem_text)
                             add_formatted_text(p_cap, rem_text)
                         else:
-                            add_formatted_text(p_cap, clean_caption)
+                            clean_caption = re.sub(r'</?(?:strong|b|em|i)>', '', raw_caption)
+                            fig_m = re.match(r'^(Figure\s+\d+\.)', clean_caption)
+                            if fig_m:
+                                pref = fig_m.group(1)
+                                add_formatted_text(p_cap, pref + " ", is_bold=True)
+                                rem_text = clean_caption[len(pref):].strip()
+                                add_formatted_text(p_cap, rem_text)
+                            else:
+                                add_formatted_text(p_cap, clean_caption)
                         
                         for r in p_cap.runs:
                             r.font.size = Pt(9.5)
@@ -351,30 +382,31 @@ def generate_docx():
                         math_lines.append(tail[:-2])
             
             raw_math = "\n".join(math_lines).strip()
-            # Extract tag if present (e.g. \tag{1})
-            tag_match = re.search(r'\\tag\{(\d+)\}', raw_math)
-            tag_str = f"({tag_match.group(1)})" if tag_match else None
+            eq_items = convert_display_equation(raw_math)
             
-            omml_el = latex_to_omml(raw_math)
-            
-            p = doc.add_paragraph()
-            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p.paragraph_format.space_before = Pt(6)
-            p.paragraph_format.space_after = Pt(6)
-            
-            if omml_el is not None:
-                # Wrap in oMathPara if not already
-                p._p.append(omml_el)
-                if tag_str:
-                    r_tab = p.add_run(f"    {tag_str}")
-                    r_tab.font.name = 'Times New Roman'
-                    r_tab.font.size = Pt(11)
-            else:
-                # Fallback to italic run
-                r = p.add_run(raw_math)
-                r.italic = True
-                if tag_str:
-                    p.add_run(f"    {tag_str}")
+            for idx, (omml_el, eq_text, tag_str) in enumerate(eq_items):
+                p = doc.add_paragraph()
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                if len(eq_items) > 1:
+                    p.paragraph_format.space_before = Pt(2) if idx > 0 else Pt(6)
+                    p.paragraph_format.space_after = Pt(2) if idx < len(eq_items) - 1 else Pt(6)
+                    if idx < len(eq_items) - 1:
+                        p.paragraph_format.keep_with_next = True
+                else:
+                    p.paragraph_format.space_before = Pt(6)
+                    p.paragraph_format.space_after = Pt(6)
+                
+                if omml_el is not None:
+                    p._p.append(omml_el)
+                    if tag_str:
+                        r_tab = p.add_run(f"    {tag_str}")
+                        r_tab.font.name = 'Times New Roman'
+                        r_tab.font.size = Pt(11)
+                else:
+                    r = p.add_run(eq_text)
+                    r.italic = True
+                    if tag_str:
+                        p.add_run(f"    {tag_str}")
             i += 1
             continue
 
