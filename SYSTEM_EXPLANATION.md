@@ -131,13 +131,13 @@ $$g_{\text{ideal}} = \frac{4\pi^2 L}{T_{\text{avg}}^2}, \qquad \text{where } T_{
 The software implements both formulas:
 ```python
 # python/pendulum_physics.py
-def calculate_g_bessel(T1, T2, L, h1_minus_h2):
-    denom = (T1**2 + T2**2) / L + (T1**2 - T2**2) / h1_minus_h2
-    return (8.0 * np.pi**2) / denom
+def katers_g_bessel(T1: float, T2: float, L: float, h1_minus_h2: float) -> float:
+    num = 8.0 * np.pi**2
+    den = (T1**2 + T2**2) / L + (T1**2 - T2**2) / h1_minus_h2
+    return num / den
 
-def calculate_g_ideal(T1, T2, L):
-    T_avg = 0.5 * (T1 + T2)
-    return (4.0 * np.pi**2 * L) / (T_avg**2)
+def katers_g_ideal(L: float, T: float) -> float:
+    return 4.0 * np.pi**2 * L / T**2
 ```
 
 ---
@@ -464,14 +464,14 @@ $$\sigma_{\bar{T}} = \frac{\sigma_T}{\sqrt{N}} = \frac{1}{\sqrt{N}}\sqrt{\frac{1
 | `SERIAL_BAUD` | `firmware/include/config.h` | `115200` | baud | UART baud rate between ESP8266 and PC |
 | `STREAM_INTERVAL_MS` | `firmware/include/config.h` | `10` | ms | Telemetry frame interval ($100\text{ Hz}$) |
 | `IR_DEBOUNCE_US` | `firmware/src/main.cpp` | `2000` | $\mu\text{s}$ | ISR noise debounce filter |
-| `comp_alpha` | `python/data_processor.py` | `0.98` | unitless | High-speed complementary filter weight |
-| `comp_alpha_slow` | `python/data_processor.py` | `0.88` | unitless | Low-speed / static tilt weight |
+| `comp_alpha` | `python/data_processor.py` | `0.98` | unitless | Recording complementary filter gyro weight |
+| `comp_alpha_slow` | `python/data_processor.py` | `0.88` | unitless | Idle mode fast-settling tilt weight |
 | `lpf_alpha` | `python/data_processor.py` | `0.25` | unitless | Pre-filter single-pole smoothing factor |
-| `min_peak_omega_deg` | `python/data_processor.py` | `3.0` | $^\circ/\text{s}$ | Zero-crossing peak threshold |
+| `min_peak_omega_deg` | `python/data_processor.py` | `0.8` | $^\circ/\text{s}$ | Zero-crossing peak threshold (lowered from 3.0) |
 | `min_half_period` | `python/data_processor.py` | `0.35` | s | Glitch and chatter rejection window |
 | `L` | `python/experiment.py` | `1.000` | m | Distance between knife-edges |
-| `h1_minus_h2` | `python/experiment.py` | `0.050` | m | Distance difference from CM to knife-edges |
-| `g_accepted` | `python/experiment.py` | `9.80665` | $\text{m/s}^2$ | Standard local gravitational reference |
+| `h1_minus_h2` | `python/experiment.py` | `None` (`-0.1400` in setup) | m | Center-of-mass balance asymmetry |
+| `g_accepted` | `python/experiment.py` | `9.80665` | $\text{m/s}^2$ | Standard gravitational reference standard |
 | `WINDOW_SIZE` | `python/widgets/trial_page.py`| `400` | samples | Scrolling graph width ($4\text{ s}$ at $100\text{ Hz}$) |
 
 ---
