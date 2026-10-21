@@ -327,7 +327,7 @@ Using corrected periods $T_{1,0} = 1.69042\text{ s}$ and $T_{2,0} = 1.77322\text
 | **Oscillations Counted ($N$)** | $39$ | $105$ | $144\text{ total}$ |
 | **Raw Mean Period ($T_{\text{meas}} \pm s_T$)** | $1.68467 \pm 0.00159\text{ s}$ | $1.77189 \pm 0.00706\text{ s}$ | — |
 | **Measured Initial Amplitude ($\theta(0)$)** | $3.54^\circ$ ($0.0617\text{ rad}$) | $0.96^\circ$ ($0.0167\text{ rad}$) | — |
-| **Fitted Decay Intercept ($\theta_{0,\text{fit}}$)** | $3.54^\circ$ ($0.0617\text{ rad}$) | $0.96^\circ$ ($0.0167\text{ rad}$) | — |
+| **Fitted Decay Intercept ($\theta_{0,\text{fit}}$)** | $3.61^\circ$ ($0.0630\text{ rad}$) | $0.94^\circ$ ($0.0164\text{ rad}$) | — |
 | **Final Amplitude ($\theta_f$)** | $2.16^\circ$ ($0.0378\text{ rad}$) | $0.53^\circ$ ($0.0093\text{ rad}$) | — |
 | **Borda Corrected Period ($T_0 \pm s_T$)** | **$1.68440 \pm 0.00160\text{ s}$** | **$1.77187 \pm 0.00706\text{ s}$** | — |
 | **Standard Error of Mean ($\sigma_{\bar{T}} = s_T/\sqrt{N}$)** | $\pm 0.257\text{ ms}$ | $\pm 0.689\text{ ms}$ | — |
