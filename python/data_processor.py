@@ -86,7 +86,6 @@ class DataProcessor:
         self._perp_offset: float = 0.0
 
         self._half_swing_omega_integral: float = 0.0
-        self._theta_acc_dc: Optional[float] = None
 
         # ── Gyro zero-crossing state with hysteresis ─────────────────
         self._prev_sample = None
@@ -122,7 +121,6 @@ class DataProcessor:
             self.a_rest = a_rest
             self._filt_a_rod = a_rest
         self._perp_offset = a_perp_rest
-        self._theta_acc_dc = 0.0
 
     def start_recording(self):
         """Begin a new recording trial. Resets all trial state."""
@@ -203,16 +201,7 @@ class DataProcessor:
         else:
             rod_sign = 1.0 if self.a_rest >= 0 else -1.0
 
-        raw_theta_acc = np.arctan2(self._filt_a_perp * rod_sign, abs(self._filt_a_rod))
-
-        # Dynamic equilibrium tracker: cancel any static mounting tilt DC bias
-        if self._theta_acc_dc is None:
-            self._theta_acc_dc = raw_theta_acc
-        else:
-            # Slow adaptation to track physical vertical equilibrium
-            self._theta_acc_dc = 0.998 * self._theta_acc_dc + 0.002 * raw_theta_acc
-
-        centered_theta_acc = raw_theta_acc - self._theta_acc_dc
+        theta_acc = np.arctan2(self._filt_a_perp * rod_sign, abs(self._filt_a_rod))
 
         # Complementary filter: high-pass gyro integration + low-pass accel tilt
         # During recording, keep alpha at comp_alpha (0.98) to prevent turning-point tangential
@@ -227,7 +216,7 @@ class DataProcessor:
 
         self.current_angle_rad = (
             alpha * (self.current_angle_rad + self._filt_omega * dt)
-            + (1.0 - alpha) * centered_theta_acc
+            + (1.0 - alpha) * theta_acc
         )
         self.current_angle_deg = float(np.degrees(self.current_angle_rad))
         self.current_omega_rad = float(self._filt_omega)
