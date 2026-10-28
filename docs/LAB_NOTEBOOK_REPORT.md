@@ -42,9 +42,9 @@ Where:
 * $T_2$: Infinitesimal oscillation period about Knife Edge $K_2$.
 
 #### 3.2 Finite-Amplitude (Borda) Circular Correction
-Because real oscillations have finite amplitude $\theta_0$, the measured period $T_{\text{meas}}$ is elongated. The equivalent infinitesimal period $T_0$ is computed via:
+Because real oscillations have a finite angular swing $\theta_0$, the measured time period $T_{\text{meas}}$ (the average period from observations, $T_{\text{mean}} = t_{\text{mean}}/N$) is slightly elongated compared to an ideal infinitesimal swing. The equivalent small-amplitude period $T_0$ is computed via:
 
-$$T_0 \approx T_{\text{meas}} \left(1 - \frac{\theta_0^2}{16}\right)$$
+$$T_0 \approx T_{\text{meas}} \left(1 - \frac{\theta_0^2}{16}\right) \quad \left[\text{where } T_{\text{meas}} \equiv T_{\text{mean}} = \frac{t}{N}\right]$$
 
 where $\theta_0$ is the peak amplitude in radians evaluated via numerical half-swing gyro velocity integration: $\theta_0 = \frac{1}{2} \int |\omega_z| dt$.
 
