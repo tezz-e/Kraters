@@ -4,6 +4,9 @@ Fixed layout: properly padded images, titles, and captions completely inside das
 """
 
 import os
+import textwrap
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from matplotlib.patches import Rectangle
@@ -47,26 +50,26 @@ plt.figtext(
 
 margin_x = 0.05
 box_w = 0.90
-box_h = 0.292
+box_h = 0.290
 
 boxes = [
     {
         "title": "GRAPH 1: Angular Velocity Waveforms & Sub-Sample Zero-Crossing Detection",
         "caption": "Figure 1: Real-time angular velocity ω_z(t) at 100 Hz for Pivot 1 (T₁ ≈ 1.69 s) and Pivot 2 (T₂ ≈ 1.77 s). Red markers show linear-interpolated zero-crossings (turning points) that eliminate human reaction latency.",
         "img": img1,
-        "box_y": 0.660,
+        "box_y": 0.665,
     },
     {
         "title": "GRAPH 2: Peak Amplitude Exponential Decay Envelopes & Quality Factor (Q)",
         "caption": "Figure 2: Peak amplitude decay fits θ(n) = θ₀ e^(-γ n) evaluating system damping. Pivot 1 quality factor Q₁ = 681.1 (decay γ₁ = 0.00460) and Pivot 2 quality factor Q₂ = 601.2 (decay γ₂ = 0.00534).",
         "img": img2,
-        "box_y": 0.340,
+        "box_y": 0.345,
     },
     {
         "title": "GRAPH 3: Phase-Space Orbit (ω vs. θ) & Bessel Sensitivity Error Attenuation",
         "caption": "Figure 3: (a) Dissipative spiral phase-space trajectory ω_z(θ) confirming low-friction planar motion. (b) Bessel error suppression surface demonstrating a 4× attenuation of center-of-mass balance uncertainty.",
         "img": img3,
-        "box_y": 0.020,
+        "box_y": 0.025,
     }
 ]
 
@@ -74,8 +77,7 @@ for b in boxes:
     by = b["box_y"]
 
     # 1. Image Axes: positioned with safe clearance above caption and below title
-    # bottom: by + 0.050, height: 0.202 -> top: by + 0.252
-    ax = fig.add_axes([margin_x + 0.02, by + 0.050, box_w - 0.04, 0.202])
+    ax = fig.add_axes([margin_x + 0.02, by + 0.060, box_w - 0.04, 0.185])
     ax.imshow(b["img"])
     ax.axis('off')
 
@@ -88,26 +90,29 @@ for b in boxes:
     )
     fig.patches.append(rect)
     
-    # 3. Cut guide text along the top dashed border
+    # 3. Cut guide badge centered on the top line with clean white masking box
     plt.figtext(
-        margin_x + 0.03, by + box_h - 0.002,
-        "- - - - - - - - - - - - - - - - - - - - - - - - - [ CUT ALONG DASHED LINE ] - - - - - - - - - - - - - - - - - - - - - - - - -",
-        fontsize=6.2, fontfamily='sans-serif', color='#777', va='center'
+        margin_x + box_w / 2.0, by + box_h,
+        " [ CUT ALONG DASHED LINE ] ",
+        fontsize=6.2, fontfamily='sans-serif', fontweight='bold', color='#555555',
+        ha='center', va='center',
+        bbox=dict(boxstyle='square,pad=0.25', facecolor='white', edgecolor='#888888', linewidth=0.6, linestyle=':')
     )
     
     # 4. Box Title (well below top cut line and above image)
     plt.figtext(
-        margin_x + box_w / 2.0, by + box_h - 0.013,
+        margin_x + box_w / 2.0, by + box_h - 0.014,
         b["title"],
-        fontsize=8.8, fontweight='bold', fontfamily='serif', ha='center', va='top', color='#111'
+        fontsize=8.6, fontweight='bold', fontfamily='serif', ha='center', va='top', color='#111'
     )
     
-    # 5. Caption (placed at by + 0.044, va='top', so it renders entirely inside the box with 5mm padding above bottom dashed line)
+    # 5. Caption: explicitly wrapped to 105 chars so it NEVER exceeds the box boundaries
+    wrapped_cap = textwrap.fill(b["caption"], width=105)
     plt.figtext(
-        margin_x + box_w / 2.0, by + 0.044,
-        b["caption"],
-        fontsize=7.0, fontstyle='italic', fontfamily='serif', ha='center', va='top', color='#222',
-        wrap=True
+        margin_x + box_w / 2.0, by + 0.054,
+        wrapped_cap,
+        fontsize=6.8, fontstyle='italic', fontfamily='serif', ha='center', va='top', color='#222',
+        linespacing=1.25
     )
 
 # Save PDF & PNG
