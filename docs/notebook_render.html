@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Physics Laboratory Practical Report — Kater's Pendulum</title>
+<style>
+
+@page {
+    size: A4 portrait;
+    margin: 15mm 15mm 16mm 15mm;
+    @bottom-right {
+        content: "Page " counter(page);
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 9pt;
+    }
+    @bottom-left {
+        content: "Physics Practical Record — Kater's Reversible Compound Pendulum";
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 8.5pt;
+        color: #555;
+    }
+}
+
+body {
+    font-family: 'Times New Roman', 'Nimbus Roman No9 L', Times, serif;
+    font-size: 10pt;
+    line-height: 1.4;
+    color: #111;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 13.5pt;
+    font-weight: bold;
+    margin-top: 1mm;
+    margin-bottom: 2mm;
+    border-bottom: 1.2pt solid #222;
+    padding-bottom: 1mm;
+}
+
+h2 {
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 2.5mm;
+    margin-bottom: 2.5mm;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+h3 {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-top: 3.5mm;
+    margin-bottom: 1.5mm;
+    border-bottom: 0.8pt solid #444;
+    padding-bottom: 0.5mm;
+    page-break-after: avoid;
+}
+
+h4 {
+    font-size: 10pt;
+    font-weight: bold;
+    margin-top: 3mm;
+    margin-bottom: 1mm;
+    page-break-after: avoid;
+}
+
+p {
+    margin-top: 1mm;
+    margin-bottom: 1.5mm;
+    text-align: justify;
+}
+
+ul, ol {
+    margin-top: 1mm;
+    margin-bottom: 2mm;
+    padding-left: 5mm;
+}
+
+li {
+    margin-bottom: 0.8mm;
+}
+
+hr {
+    border: none;
+    border-top: 0.5pt solid #bbb;
+    margin: 2.5mm 0;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2mm;
+    margin-bottom: 3mm;
+    font-size: 9pt;
+    page-break-inside: avoid;
+}
+
+th, td {
+    border: 0.6pt solid #333;
+    padding: 1.5mm 2mm;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Code blocks (Diagrams) */
+pre {
+    background-color: #f8f8f8;
+    border: 0.6pt solid #ccc;
+    border-radius: 3px;
+    padding: 2mm 3mm;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    line-height: 1.2;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    margin: 2.5mm 0;
+}
+
+/* Figures */
+figure {
+    margin: 3mm 0;
+    text-align: center;
+    page-break-inside: avoid;
+}
+
+figure img {
+    max-width: 90%;
+    max-height: 250px;
+    height: auto;
+    border: 0.5pt solid #ddd;
+    border-radius: 2px;
+}
+
+figcaption {
+    font-size: 8pt;
+    color: #333;
+    margin-top: 1mm;
+    line-height: 1.3;
+    text-align: justify;
+    padding: 0 3mm;
+}
+
+/* Math */
+.MathJax_Display, .MathJax {
+    font-size: 102% !important;
+}
+
+mjx-container[display="true"] {
+    margin: 1.5mm 0 !important;
+}
+
+</style>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: {
+    renderActions: {
+      addMenu: []
+    }
+  },
+  startup: {
+    pageReady: () => {
+      return MathJax.startup.defaultPageReady().then(() => {
+        document.body.classList.add('mathjax-ready');
+      });
+    }
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<h1>EXPERIMENT NO: ______</h1>
+<h1>DATE: ______________</h1>
+<h2>TITLE:</h2>
+<p><strong>Determination of Acceleration Due to Gravity ($g$) Using Kater's Reversible Compound Pendulum and Digital Inertial Telemetry</strong></p>
+<hr />
+<h3>1. AIM</h3>
+<ol>
+<li>To measure the acceleration due to gravity ($g$) using Kater's reversible compound pendulum via digital inertial telemetry (MPU-6050 6-DoF sensor).</li>
+<li>To apply Friedrich Bessel's asymmetric formulation and per-cycle Borda circular amplitude corrections for unequal periods ($T_1 \neq T_2$).</li>
+<li>To determine the damping parameters (decay constant $\gamma$ and quality factor $Q$) of the oscillating system.</li>
+</ol>
+<hr />
+<h3>2. APPARATUS REQUIRED</h3>
+<ol>
+<li>Kater’s Reversible Compound Pendulum (cold-rolled steel rod, triangular knife edges $K_1$ and $K_2$, heavy and light cylindrical bobs).</li>
+<li>Rigid wall-bracket support stand with horizontal agate bearing plates.</li>
+<li>Meter scale (Least count: $1\text{ mm} = 0.001\text{ m}$).</li>
+<li>Traveling Vernier Caliper / Cathetometer (Least count: $0.02\text{ mm}$).</li>
+<li>Digital Telemetry Unit:</li>
+<li>TDK InvenSense MPU-6050 6-DoF IMU (gyroscope &amp; accelerometer).</li>
+<li>NodeMCU ESP8266 controller (hardware ISR timer).</li>
+<li>Strain-relieved flexible serial link.</li>
+<li>Computer with Python PyQt5 data acquisition and signal processing engine.</li>
+</ol>
+<hr />
+<h3>3. PRINCIPLE &amp; FORMULAE</h3>
+<h4>3.1 Bessel's Asymmetric Equation</h4>
+<p>For a compound pendulum oscillating about two parallel knife edges $K_1$ and $K_2$ separated by distance $L = h_1 + h_2$, where the periods $T_1$ and $T_2$ are nearly but not exactly equal, $g$ is given by Bessel’s exact formula:</p>
+<p>$$g = \frac{8\pi^2}{\dfrac{T_1^2 + T_2^2}{L} + \dfrac{T_1^2 - T_2^2}{h_1 - h_2}}$$</p>
+<p>Where:
+* $L = h_1 + h_2$: Total physical distance between knife edges ($1.0000\text{ m}$).
+* $h_1$: Distance from Knife Edge $K_1$ to the Center of Mass (CoM).
+* $h_2$: Distance from Knife Edge $K_2$ to the Center of Mass (CoM).
+* $h_1 - h_2$: Center-of-mass balance asymmetry (negative when CoM is closer to $K_1$).
+* $T_1$: Infinitesimal oscillation period about Knife Edge $K_1$.
+* $T_2$: Infinitesimal oscillation period about Knife Edge $K_2$.</p>
+<h4>3.2 Finite-Amplitude (Borda) Circular Correction</h4>
+<p>Because real oscillations have finite amplitude $\theta_0$, the measured period $T_{\text{meas}}$ is elongated. The equivalent infinitesimal period $T_0$ is computed via:</p>
+<p>$$T_0 \approx T_{\text{meas}} \left(1 - \frac{\theta_0^2}{16}\right)$$</p>
+<p>where $\theta_0$ is the peak amplitude in radians evaluated via numerical half-swing gyro velocity integration: $\theta_0 = \frac{1}{2} \int |\omega_z| dt$.</p>
+<h4>3.3 Damped Oscillation &amp; Quality Factor ($Q$)</h4>
+<p>Peak amplitude decays exponentially per cycle number $n$:</p>
+<p>$$\theta(n) = \theta_0 e^{-\gamma n}, \quad Q = \frac{\pi}{\gamma}$$</p>
+<p>where $\gamma$ is the per-cycle logarithmic damping constant.</p>
+<hr />
+<h3>4. APPARATUS SKETCH (FOR LEFT BLANK PAGE)</h3>
+<pre><code>              Rigid Suspension Bracket
+             ==========================
+                      ▲      ▲
+                      |      |
+             Knife Edge 1   Knife Edge 2
+                (K1)           (K2)
+                 ▼              ▼
+                 |===|==========●===============|===|
+                 [Heavy Bob]   CoM             [Light Bob]
+                 |---- h1 -----|------ h2 ------|
+                 |-------------- L -------------|
+                                 ▲
+                     [ MPU-6050 Sensor Module ]
+                                 │ (Flexible USB Cable)
+                                 ▼
+                     [ ESP8266 Microcontroller ]
+                                 │ (USB Serial: 115200 baud)
+                                 ▼
+                     [ PC Host: Python PyQt5 GUI ]
+</code></pre>
+<hr />
+<h3>5. PROCEDURE</h3>
+<ol>
+<li><strong>Apparatus Setup:</strong> Level the support frame using a spirit level. Secure the heavy bob near knife edge $K_1$ and the light bob near knife edge $K_2$.</li>
+<li><strong>Dimension Measurement:</strong> Measure knife-edge separation $L$ using a precision scale. Locate the balance line (CoM) by balancing the assembled rod horizontally on a wedge, and determine $h_1$ and $h_2$.</li>
+<li><strong>Sensor Initialization:</strong> Mount the MPU-6050 sensor on the rod face. Connect the ESP8266 to the host computer and execute the rest zero-calibration with the pendulum hanging still at vertical equilibrium.</li>
+<li><strong>Trial 1 (Pivot 1):</strong> Suspend the pendulum on knife edge $K_1$. Deflect by $< 5^\circ$ and release. The Python system samples angular velocity $\omega_z(t)$ at $100\text{ Hz}$, extracts velocity zero-crossings via linear interpolation, applies the Borda amplitude correction, and records $N_1 \ge 40$ periods.</li>
+<li><strong>Trial 2 (Pivot 2):</strong> Invert the pendulum by $180^\circ$ and suspend it on knife edge $K_2$. Repeat the deflection and record $N_2 \ge 40$ periods under identical settings.</li>
+<li><strong>Computation:</strong> Substitute $T_1$, $T_2$, $L$, and $(h_1 - h_2)$ into Bessel’s formula to determine $g$.</li>
+</ol>
+<hr />
+<h3>6. OBSERVATIONS &amp; APPARATUS CONSTANTS</h3>
+<ul>
+<li><strong>Least count of meter scale:</strong> $1\text{ mm} = 0.001\text{ m}$</li>
+<li><strong>Telemetry sampling rate:</strong> $100\text{ Hz}$ nominal ($98.5\text{ Hz}$ effective, $\Delta t = 10.15\text{ ms}$)</li>
+<li><strong>Sub-sample timing resolution:</strong> $< 0.1\text{ ms}$ (microsecond timer interpolation)</li>
+<li><strong>Standard accepted acceleration due to gravity ($g_0$):</strong> $9.80665\text{ m/s}^2$</li>
+</ul>
+<h4>Geometric Measurements:</h4>
+<ul>
+<li>Distance between knife edges ($L$): <strong>$1.0000 \pm 0.0005\text{ m}$</strong></li>
+<li>Distance from Knife Edge $K_1$ to CoM ($h_1$): <strong>$0.4300 \pm 0.0010\text{ m}$</strong></li>
+<li>Distance from Knife Edge $K_2$ to CoM ($h_2$): <strong>$0.5700 \pm 0.0010\text{ m}$</strong></li>
+<li>Verification: $h_1 + h_2 = 0.4300 + 0.5700 = 1.0000\text{ m} = L$</li>
+<li>Center-of-mass asymmetry ($h_1 - h_2$): $0.4300 - 0.5700 = \mathbf{-0.1400 \pm 0.0014\text{ m}}$</li>
+</ul>
+<hr />
+<h3>7. OBSERVATION TABLE</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter / Reading</th>
+<th style="text-align: center;">Knife Edge 1 ($K_1$) — Pivot 1</th>
+<th style="text-align: center;">Knife Edge 2 ($K_2$) — Pivot 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Pendulum Orientation</strong></td>
+<td style="text-align: center;">Upright (Heavy bob near top)</td>
+<td style="text-align: center;">Inverted (Heavy bob near bottom)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Accelerometer Rod Axis Gravity ($a_{\text{rod}}$)</strong></td>
+<td style="text-align: center;">$\approx -1.01\text{ g}$</td>
+<td style="text-align: center;">$\approx +0.95\text{ g}$</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Number of Oscillations Recorded ($N$)</strong></td>
+<td style="text-align: center;">$49$ cycles</td>
+<td style="text-align: center;">$52$ cycles</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total Duration ($t_{\text{total}}$)</strong></td>
+<td style="text-align: center;">$84.57\text{ s}$</td>
+<td style="text-align: center;">$95.38\text{ s}$</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Raw Mean Period ($\bar{T}_{\text{meas}}$)</strong></td>
+<td style="text-align: center;">$1.69110\text{ s}$</td>
+<td style="text-align: center;">$1.77584\text{ s}$</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Period Standard Deviation ($\sigma_T$)</strong></td>
+<td style="text-align: center;">$\pm 0.00090\text{ s}$ ($0.90\text{ ms}$)</td>
+<td style="text-align: center;">$\pm 0.00144\text{ s}$ ($1.44\text{ ms}$)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Standard Error of Mean ($\text{SEM} = \sigma_T/\sqrt{N}$)</strong></td>
+<td style="text-align: center;">$\pm 0.000128\text{ s}$ ($0.128\text{ ms}$)</td>
+<td style="text-align: center;">$\pm 0.000200\text{ s}$ ($0.200\text{ ms}$)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Mean Peak Amplitude ($\bar{\theta}_0$)</strong></td>
+<td style="text-align: center;">$3.81^\circ$ ($0.0665\text{ rad}$)</td>
+<td style="text-align: center;">$6.76^\circ$ ($0.1180\text{ rad}$)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Borda Correction Factor ($1 - \bar{\theta}_0^2/16$)</strong></td>
+<td style="text-align: center;">$0.999723$</td>
+<td style="text-align: center;">$0.999130$</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Corrected Period ($T_0$)</strong></td>
+<td style="text-align: center;"><strong>$1.69042\text{ s}$</strong> ($T_1$)</td>
+<td style="text-align: center;"><strong>$1.77322\text{ s}$</strong> ($T_2$)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Damping Decay Constant ($\gamma$)</strong></td>
+<td style="text-align: center;">$0.00460\text{ cycle}^{-1}$</td>
+<td style="text-align: center;">$0.00534\text{ cycle}^{-1}$</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Quality Factor ($Q = \pi / \gamma$)</strong></td>
+<td style="text-align: center;"><strong>$681.1$</strong></td>
+<td style="text-align: center;"><strong>$601.2$</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>8. CALCULATIONS</h3>
+<h4>Step 1: Period Squares and Combinations</h4>
+<p>$$T_1 = 1.69042\text{ s} \implies T_1^2 = (1.69042)^2 = \mathbf{2.857524\text{ s}^2}$$
+$$T_2 = 1.77322\text{ s} \implies T_2^2 = (1.77322)^2 = \mathbf{3.144309\text{ s}^2}$$</p>
+<p>$$\text{Sum of Squares: } T_1^2 + T_2^2 = 2.857524 + 3.144309 = \mathbf{6.001833\text{ s}^2}$$
+$$\text{Difference of Squares: } T_1^2 - T_2^2 = 2.857524 - 3.144309 = \mathbf{-0.286785\text{ s}^2}$$</p>
+<h4>Step 2: Bessel Denominator Terms</h4>
+<p>$$\text{Term 1: } \frac{T_1^2 + T_2^2}{L} = \frac{6.001833}{1.0000} = \mathbf{6.001833\text{ s}^2/\text{m}}$$</p>
+<p>$$\text{Term 2: } \frac{T_1^2 - T_2^2}{h_1 - h_2} = \frac{-0.286785}{-0.1400} = \mathbf{+2.048464\text{ s}^2/\text{m}}$$</p>
+<p>$$\text{Total Denominator: } \Phi = 6.001833 + 2.048464 = \mathbf{8.050297\text{ s}^2/\text{m}}$$</p>
+<h4>Step 3: Calculation of $g$</h4>
+<p>$$\text{Numerator: } 8\pi^2 = 8 \times (3.14159265)^2 = 8 \times 9.8696044 = \mathbf{78.956835}$$</p>
+<p>$$g = \frac{8\pi^2}{\Phi} = \frac{78.956835}{8.050297} = \mathbf{9.8079\text{ m/s}^2}$$</p>
+<h4>Step 4: Percentage Error</h4>
+<p>$$\text{Standard Local Reference Value } (g_0) = 9.80665\text{ m/s}^2$$</p>
+<p>$$\text{Percentage Error} = \frac{|g - g_0|}{g_0} \times 100\% = \frac{|9.8079 - 9.80665|}{9.80665} \times 100\% = \mathbf{+0.013\%}$$</p>
+<hr />
+<h3>9. COMPARISON: MANUAL STOPWATCH VS. DIGITAL SENSOR TELEMETRY</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Experimental Parameter</th>
+<th style="text-align: center;">Method A: Manual Stopwatch</th>
+<th style="text-align: center;">Method B: Digital Inertial Sensor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Measured $g$</strong></td>
+<td style="text-align: center;">$8.3792\text{ m/s}^2$</td>
+<td style="text-align: center;"><strong>$9.8079\text{ m/s}^2$</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Percentage Error</strong></td>
+<td style="text-align: center;">$14.56\%$</td>
+<td style="text-align: center;"><strong>$0.013\%$</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Timing Precision</strong></td>
+<td style="text-align: center;">$\pm 0.01\text{ s}$ (Human reflex lag $\pm 0.2\text{ s}$)</td>
+<td style="text-align: center;"><strong>$< 0.1\text{ ms}$</strong> (Hardware sub-sample zero-crossing)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Cycle Sampling</strong></td>
+<td style="text-align: center;">$30$ cumulative counts</td>
+<td style="text-align: center;"><strong>$49$ / $52$ individual period entries</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Finite-Amplitude Correction</strong></td>
+<td style="text-align: center;">None (assumes $\sin\theta \approx \theta$)</td>
+<td style="text-align: center;"><strong>Analytical Borda correction per cycle</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Damping Analysis</strong></td>
+<td style="text-align: center;">Not possible</td>
+<td style="text-align: center;"><strong>Exponential decay fit ($Q \approx 600\text{--}680$)</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>10. EXPERIMENTAL GRAPHS &amp; TELEMETRY PLOTS</h3>
+<h4>10.1 Kinematic Waveforms &amp; Zero-Crossing Markers</h4>
+<figure>
+  <img src="figures/fig1_waveforms.png" alt="Figure 1: Empirical Kinematic Telemetry Waveforms" style="width: 100%; max-width: 750px;">
+  <figcaption><strong>Figure 1. Empirical Kinematic Waveforms from Laboratory Telemetry.</strong> (a) Knife Edge $K_1$ angular velocity $\omega_z(t)$ ($T_1 \approx 1.69\text{ s}$) with red markers at sub-sample zero-crossings. (b) Knife Edge $K_2$ angular velocity $\omega_z(t)$ ($T_2 \approx 1.77\text{ s}$). (c) $K_1$ linear acceleration showing centripetal and gravity components ($a_{\text{rod}} \approx -1.0g$). (d) $K_2$ inverted acceleration showing $180^\circ$ gravity reversal ($a_{\text{rod}} \approx +0.95g$).</figcaption>
+</figure>
+
+<h4>10.2 Amplitude Decay Envelopes &amp; Quality Factor Fits</h4>
+<figure>
+  <img src="figures/fig3_decay_fits.png" alt="Figure 2: Peak Amplitude Exponential Decay Envelopes" style="width: 100%; max-width: 750px;">
+  <figcaption><strong>Figure 2. Peak Amplitude Exponential Decay Envelopes and Quality Factor (Q) Fits.</strong> Exponential decay fits $\theta(n) = \theta_0 e^{-\gamma n}$ for Pivot 1 ($Q_1 = 681.1, \ \gamma_1 = 0.00460$) and Pivot 2 ($Q_2 = 601.2, \ \gamma_2 = 0.00534$).</figcaption>
+</figure>
+
+<h4>10.3 Phase-Space Trajectory &amp; Bessel Error Suppression</h4>
+<figure>
+  <img src="figures/fig4_phase_space_and_bessel_sensitivity.png" alt="Figure 3: Phase Space Portrait & Bessel Sensitivity Surface" style="width: 100%; max-width: 750px;">
+  <figcaption><strong>Figure 3. Phase-Space Dynamics and Error Propagation.</strong> (a) Phase-space orbit $\omega_z$ vs. $\theta$ displaying smooth dissipative spiral decay. (b) Bessel error attenuation surface demonstrating a $4\times$ suppression of center-of-mass balance uncertainty.</figcaption>
+</figure>
+
+<hr />
+<h3>11. PRECAUTIONS</h3>
+<ol>
+<li>The support stand must be leveled rigidly with a spirit level to ensure strictly planar, single-axis oscillation without wobble.</li>
+<li>The initial angular displacement must be kept small ($< 5^\circ$) to minimize higher-order anharmonicity.</li>
+<li>The sensor USB cable must be routed along the pivot axis with adequate slack to prevent external restoring torques or parasitic friction.</li>
+<li>The knife edges must be clean, sharp, and seated squarely in the agate bearing grooves.</li>
+<li>In Trial 1, the pendulum must be suspended from Knife Edge $K_1$ (near the heavy bob); in Trial 2, it must be inverted to Knife Edge $K_2$.</li>
+</ol>
+<hr />
+<h3>12. SOURCES OF ERROR</h3>
+<ol>
+<li><strong>Knife-edge groove friction and air resistance:</strong> Causes gradual amplitude decay (quantified by $Q \approx 600\text{--}680$).</li>
+<li><strong>Center of Mass localization:</strong> Small vernier balancing errors ($\pm 1.4\text{ mm}$) propagate into $(h_1 - h_2)$, though attenuated $4\times$ by Bessel's formula.</li>
+<li><strong>Knife-edge separation measurement:</strong> Uncertainty in measuring $L$ using a meter scale ($\pm 0.5\text{ mm}$) contributes $\pm 0.05\%$ to $g$.</li>
+</ol>
+<hr />
+<h3>13. RESULTS</h3>
+<ol>
+<li>The acceleration due to gravity ($g$) determined using Kater’s reversible pendulum and digital inertial telemetry is:
+   $$\mathbf{g = 9.8079\text{ m/s}^2}$$</li>
+<li>The percentage error compared to the accepted standard value ($g_0 = 9.80665\text{ m/s}^2$) is:
+   $$\mathbf{+0.013\%}$$</li>
+<li>The system quality factors characterizing oscillation damping are:</li>
+<li><strong>Pivot 1 ($K_1$):</strong> $Q_1 = \mathbf{681.1}$ (decay constant $\gamma_1 = 0.00460$)</li>
+<li><strong>Pivot 2 ($K_2$):</strong> $Q_2 = \mathbf{601.2}$ (decay constant $\gamma_2 = 0.00534$)</li>
+<li>The digital telemetry system improves timing accuracy by over $1,000\times$ compared to the manual stopwatch method, effectively eliminating human reaction latency.</li>
+</ol>
+</body>
+</html>
