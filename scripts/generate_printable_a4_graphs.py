@@ -1,4 +1,7 @@
-"""Assemble all 3 Kater's Pendulum experimental graphs onto a single A4 printable page with scissors cut guidelines."""
+"""Assemble all 3 Kater's Pendulum experimental graphs onto a single A4 printable page with scissors cut guidelines.
+
+Fixed layout: properly padded images, titles, and captions completely inside dashed cut boxes with zero clipping.
+"""
 
 import os
 import matplotlib.pyplot as plt
@@ -32,83 +35,78 @@ fig = plt.figure(figsize=(A4_WIDTH, A4_HEIGHT), dpi=300)
 
 # Main Title at top
 plt.figtext(
-    0.5, 0.980,
+    0.5, 0.985,
     "KATER'S REVERSIBLE PENDULUM — EXPERIMENTAL TELEMETRY GRAPHS",
-    fontsize=11.5, fontweight='bold', fontfamily='serif', ha='center', va='top'
+    fontsize=11.0, fontweight='bold', fontfamily='serif', ha='center', va='top'
 )
 plt.figtext(
-    0.5, 0.965,
+    0.5, 0.970,
     "Instructions: Print on A4 paper at 100% scale. Cut along dashed boxes and paste into your physical lab record notebook.",
-    fontsize=8, fontstyle='italic', fontfamily='serif', ha='center', va='top', color='#444'
+    fontsize=7.8, fontstyle='italic', fontfamily='serif', ha='center', va='top', color='#444'
 )
 
 margin_x = 0.05
 box_w = 0.90
+box_h = 0.292
 
 boxes = [
     {
         "title": "GRAPH 1: Angular Velocity Waveforms & Sub-Sample Zero-Crossing Detection",
         "caption": "Figure 1: Real-time angular velocity ω_z(t) at 100 Hz for Pivot 1 (T₁ ≈ 1.69 s) and Pivot 2 (T₂ ≈ 1.77 s). Red markers show linear-interpolated zero-crossings (turning points) that eliminate human reaction latency.",
         "img": img1,
-        "box_y": 0.655,
-        "box_h": 0.295,
-        "img_y": 0.686,
-        "img_h": 0.235
+        "box_y": 0.660,
     },
     {
         "title": "GRAPH 2: Peak Amplitude Exponential Decay Envelopes & Quality Factor (Q)",
         "caption": "Figure 2: Peak amplitude decay fits θ(n) = θ₀ e^(-γ n) evaluating system damping. Pivot 1 quality factor Q₁ = 681.1 (decay γ₁ = 0.00460) and Pivot 2 quality factor Q₂ = 601.2 (decay γ₂ = 0.00534).",
         "img": img2,
-        "box_y": 0.350,
-        "box_h": 0.290,
-        "img_y": 0.380,
-        "img_h": 0.230
+        "box_y": 0.340,
     },
     {
         "title": "GRAPH 3: Phase-Space Orbit (ω vs. θ) & Bessel Sensitivity Error Attenuation",
         "caption": "Figure 3: (a) Dissipative spiral phase-space trajectory ω_z(θ) confirming low-friction planar motion. (b) Bessel error suppression surface demonstrating a 4× attenuation of center-of-mass balance uncertainty.",
         "img": img3,
-        "box_y": 0.045,
-        "box_h": 0.290,
-        "img_y": 0.075,
-        "img_h": 0.230
+        "box_y": 0.020,
     }
 ]
 
 for b in boxes:
-    # 1. Add Image Axes FIRST
-    ax = fig.add_axes([margin_x + 0.02, b["img_y"], box_w - 0.04, b["img_h"]])
+    by = b["box_y"]
+
+    # 1. Image Axes: positioned with safe clearance above caption and below title
+    # bottom: by + 0.050, height: 0.202 -> top: by + 0.252
+    ax = fig.add_axes([margin_x + 0.02, by + 0.050, box_w - 0.04, 0.202])
     ax.imshow(b["img"])
     ax.axis('off')
 
-    # 2. Draw dashed cut box with fill=False (TRANSPARENT INTERIOR - NEVER COVERS IMAGE)
+    # 2. Draw dashed cut box (fill=False so images are completely visible)
     rect = Rectangle(
-        (margin_x, b["box_y"]), box_w, b["box_h"],
+        (margin_x, by), box_w, box_h,
         transform=fig.transFigure,
         fill=False,
-        edgecolor='#555555', linestyle='--', linewidth=1.0
+        edgecolor='#555555', linestyle='--', linewidth=0.9
     )
     fig.patches.append(rect)
     
-    # Cut guide text on top border
+    # 3. Cut guide text along the top dashed border
     plt.figtext(
-        margin_x + 0.03, b["box_y"] + b["box_h"] - 0.003,
+        margin_x + 0.03, by + box_h - 0.002,
         "- - - - - - - - - - - - - - - - - - - - - - - - - [ CUT ALONG DASHED LINE ] - - - - - - - - - - - - - - - - - - - - - - - - -",
-        fontsize=6.5, fontfamily='sans-serif', color='#666', va='center'
+        fontsize=6.2, fontfamily='sans-serif', color='#777', va='center'
     )
     
-    # Title inside box
+    # 4. Box Title (well below top cut line and above image)
     plt.figtext(
-        margin_x + box_w / 2.0, b["box_y"] + b["box_h"] - 0.012,
+        margin_x + box_w / 2.0, by + box_h - 0.013,
         b["title"],
-        fontsize=9, fontweight='bold', fontfamily='serif', ha='center', va='top', color='#111'
+        fontsize=8.8, fontweight='bold', fontfamily='serif', ha='center', va='top', color='#111'
     )
     
-    # Caption inside box below image
+    # 5. Caption (placed at by + 0.044, va='top', so it renders entirely inside the box with 5mm padding above bottom dashed line)
     plt.figtext(
-        margin_x + box_w / 2.0, b["box_y"] + 0.008,
+        margin_x + box_w / 2.0, by + 0.044,
         b["caption"],
-        fontsize=7.2, fontstyle='italic', fontfamily='serif', ha='center', va='bottom', color='#222',
+        fontsize=7.0, fontstyle='italic', fontfamily='serif', ha='center', va='top', color='#222',
         wrap=True
     )
 
